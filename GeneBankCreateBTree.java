@@ -36,6 +36,9 @@ public class GeneBankCreateBTree {
 			degree = Integer.parseInt(args[1]);	
 			//get sequence length
 			sequenceLength = Integer.parseInt(args[3]);
+			if(sequenceLength < 0 || sequenceLength > 31) {
+				throw new Exception();
+			}
 			//parse debug level
 		}catch(Exception e) {
 			printUsage();
@@ -66,15 +69,25 @@ public class GeneBankCreateBTree {
 					for(int i = 0; i < character.length()-sequenceLength+1;i++) {
 						String s = "";
 						for(int j = 0; j < sequenceLength; j++) {
-							s += character.charAt(i+j);
+							if(character.charAt(i+j) == 'a') {
+								s += "00";
+							}
+							if(character.charAt(i+j) == 't') {
+								s += "11";
+							}
+							if(character.charAt(i+j) == 'c') {
+								s += "01";
+							}
+							if(character.charAt(i+j) == 'g') {
+								s += "10";
+							}
 						}
 						//OKAY! We now have s which we will use
-						//
-						// s is the proper length and only holds acgt
-						//
-						// you can check by print s
-						System.out.println(s);
-						//
+						// s is the proper length and only holds acgt represented as a string of 1's and 0's
+						
+						Long key = Long.parseLong(s);
+						BTreeObject treeO = new BTreeObject(key);
+						
 					}
 
 				}
