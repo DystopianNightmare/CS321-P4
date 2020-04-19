@@ -54,6 +54,7 @@ public class GeneBankCreateBTree {
 		String fileName = args[2];
 		
 		//Get name of Binary file and make a new BTree
+		System.out.println(m);
 		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + m );	//This is the name of the binary file
 		BTree tree = new BTree(nameOfTree,m);
 		
@@ -98,8 +99,8 @@ public class GeneBankCreateBTree {
 						
 						
 						Long key = Long.parseLong(s);
-//						BTreeObject obj = new BTreeObject(key);
-//						tree.addObjectToNode(obj);
+						
+//						tree.addObjectToNode(key);
 
 						
 					}
@@ -113,10 +114,10 @@ public class GeneBankCreateBTree {
 			e.printStackTrace();
 		}
 		//TESTING 1 INPUT
-		Long key = (long) 111111111;
-		BTreeObject obj = new BTreeObject(key);
-		tree.addObjectToNode(obj);
-		tree.print();
+		Long key = (long) 33;
+		
+		tree.addObjectToNode(key);
+		
 	}
 	public static void printUsage() {
 		System.out.println("java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");

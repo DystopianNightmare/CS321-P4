@@ -23,20 +23,22 @@ public class BTree {
 		return node;
 	}
 	
-	public void addObjectToNode(BTreeObject obj) throws IOException {
+	public void addObjectToNode(long val) throws IOException {
 		// we have a tree object. lets search for it and either add it to the node or increment frequency
 		//check if obj is in the tree
-		
+		node.addObj(val);
 		
 	}
 	public void print() throws IOException {
 		//test print method to print the byte[] digit by digit
 		
 		 InputStream iS = new FileInputStream(node.getFile());
-		 int j = iS.read();
+		
+		 
 		 byte[] b = new byte[1000];
-		  b = iS.readNBytes(300);
-		 for(int i = 0; i < 300; i++) {
+		  b = iS.readNBytes(100);
+		  System.out.println(b);
+		 for(int i = 0; i < b.length; i++) {
 			 System.out.println(b[i]);
 		 }
 		iS.close();

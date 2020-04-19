@@ -7,7 +7,7 @@ public class BTreeObject implements Serializable {
 	
 	public BTreeObject(long key) {
 		this.key = key;
-		frequency = 1;
+		frequency = 10;
 	}
 
 	public void incrementFrequency() {
