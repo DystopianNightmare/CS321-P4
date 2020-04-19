@@ -1,4 +1,5 @@
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -8,14 +9,16 @@ import java.util.Scanner;
  */
 public class GeneBankCreateBTree {
 
-	private static Integer degree; 		//degree to be used
+	private static Integer m; 		//degree to be used
 	//	private static BufferedReader br;
-	private static int cacheSize;
+	private static int cacheSize;		//if cache is used this will be the cache size
 	private static int debugLevel;		//to be used later
-	private static boolean useCache = false;
-	private static int sequenceLength;
+	private static boolean useCache = false; //false if arg[0] is 0
+	private static int sequenceLength;		//this is the k value
+	private static  String nameOfTree; // this will be the name of the binary file
+	private BTree tree;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
@@ -33,7 +36,10 @@ public class GeneBankCreateBTree {
 			}
 
 			//parse degree
-			degree = Integer.parseInt(args[1]);	
+			m = Integer.parseInt(args[1]);	
+			if(m == 0) {
+				//implement something to use the optimal degree
+			}
 			//get sequence length
 			sequenceLength = Integer.parseInt(args[3]);
 			if(sequenceLength < 0 || sequenceLength > 31) {
@@ -44,8 +50,13 @@ public class GeneBankCreateBTree {
 			printUsage();
 		}
 
-		//get gbk file and parse
+		//get gbk file
 		String fileName = args[2];
+		
+		//Get name of Binary file and make a new BTree
+		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + m );	//This is the name of the binary file
+		BTree tree = new BTree(nameOfTree,m);
+		
 		try {
 			Scanner scan = new Scanner(new FileReader(fileName));
 			String line;
@@ -83,10 +94,13 @@ public class GeneBankCreateBTree {
 							}
 						}
 						//OKAY! We now have s which we will use
-						// s is the proper length and only holds acgt represented as a string of 1's and 0's
+						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
+						
 						
 						Long key = Long.parseLong(s);
-						BTreeObject treeO = new BTreeObject(key);
+//						BTreeObject obj = new BTreeObject(key);
+//						tree.addObjectToNode(obj);
+
 						
 					}
 
@@ -94,9 +108,15 @@ public class GeneBankCreateBTree {
 
 			}
 			scan.close();
+			tree.print();
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
+		//TESTING 1 INPUT
+		Long key = (long) 111111111;
+		BTreeObject obj = new BTreeObject(key);
+		tree.addObjectToNode(obj);
+		tree.print();
 	}
 	public static void printUsage() {
 		System.out.println("java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
