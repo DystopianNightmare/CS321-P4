@@ -34,8 +34,11 @@ public class BTree {
 		
 		 InputStream iS = new FileInputStream(node.getFile());
 		 int j = iS.read();
-		 System.out.println(j);
-			System.out.println(iS.readAllBytes().toString());
+		 byte[] b = new byte[1000];
+		  b = iS.readNBytes(300);
+		 for(int i = 0; i < 300; i++) {
+			 System.out.println(b[i]);
+		 }
 		iS.close();
 	}
 	

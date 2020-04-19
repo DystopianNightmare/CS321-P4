@@ -14,6 +14,9 @@ private boolean isLeaf, isRoot;
 private byte[] node;
 private int m;
 private File file2;
+private int testOffset;
+private int testLength;
+
 //default constructor only to be used when creating Btree with no elements
 	public BTreeNode(File file, int m) throws IOException {
 		node = new byte[4096]; 
@@ -22,14 +25,16 @@ private File file2;
 		this.m = m;
 		copyMToNode(m);
 		//
-		 file2 = new File("te");
+		testLength = 200;
+		
+		 file2 = new File("test");
 		OutputStream output = null;
 		
 		 output = new FileOutputStream(file2, true);
 		 
 		String s = "test";
 		
-		output.write(s.getBytes());
+		output.write(node, 0, testLength );
 		System.out.println("here");
 	
 	}
