@@ -4,10 +4,11 @@ public class BTreeObject implements Serializable {
 
 	private long key;
 	private int frequency;
+	private int j;
 	
 	public BTreeObject(long key) {
 		this.key = key;
-		frequency = 10;
+		frequency = 1;
 	}
 
 	public void incrementFrequency() {
@@ -16,4 +17,8 @@ public class BTreeObject implements Serializable {
 	public int getFrequency() {
 		return frequency;
 	}
+	public long getKey() {
+		return key;
+	}
 }
+

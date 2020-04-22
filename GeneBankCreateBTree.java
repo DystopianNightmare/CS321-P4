@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class GeneBankCreateBTree {
 
-	private static Integer m; 		//degree to be used
+	private static Integer m; 		//degree to be used -- this is the value for degree
 	//	private static BufferedReader br;
 	private static int cacheSize;		//if cache is used this will be the cache size
 	private static int debugLevel;		//to be used later
@@ -54,7 +54,7 @@ public class GeneBankCreateBTree {
 		String fileName = args[2];
 		
 		//Get name of Binary file and make a new BTree
-		System.out.println(m);
+		
 		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + m );	//This is the name of the binary file
 		BTree tree = new BTree(nameOfTree,m);
 		
@@ -81,25 +81,29 @@ public class GeneBankCreateBTree {
 					for(int i = 0; i < character.length()-sequenceLength+1;i++) {
 						String s = "";
 						for(int j = 0; j < sequenceLength; j++) {
-							if(character.charAt(i+j) == 'a') {
+							if(character.charAt(i+j) == 'a' || character.charAt(i+j) == 'A') {
 								s += "00";
 							}
-							if(character.charAt(i+j) == 't') {
+							if(character.charAt(i+j) == 't' || character.charAt(i+j) == 'T') {
 								s += "11";
 							}
-							if(character.charAt(i+j) == 'c') {
+							if(character.charAt(i+j) == 'c' || character.charAt(i+j) == 'C') {
 								s += "01";
 							}
-							if(character.charAt(i+j) == 'g') {
+							if(character.charAt(i+j) == 'g' || character.charAt(i+j) == 'G') {
 								s += "10";
 							}
+							if(character.charAt(i+j) == 'n' || character.charAt(i+j) == 'N') {
+								s += "n";
+							}
+							
 						}
 						//OKAY! We now have s which we will use
 						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
 						
-						
+						if(!s.contains("n")) {
 						Long key = Long.parseLong(s);
-						
+						}
 //						tree.addObjectToNode(key);
 
 						
@@ -116,7 +120,7 @@ public class GeneBankCreateBTree {
 		//TESTING 1 INPUT
 		Long key = (long) 33;
 		
-		tree.addObjectToNode(key);
+		tree.insertNode(key);
 		
 	}
 	public static void printUsage() {
