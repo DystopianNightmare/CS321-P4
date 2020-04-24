@@ -20,15 +20,15 @@ public class BTree {
 	}
 
 	public BTreeNode BTreeCreateNode()  {
-		BTreeNode node = new BTreeNode();
+		BTreeNode node = new BTreeNode(m);
 		return node;
 	}
 
-	public void BTreeInsert(BTreeNode node,long val)  {
-		
+	public void BTreeInsert(long val)  {
+
 		node = root;
 		if(node.getCurrentlyStored() == m) {
-			BTreeNode s = new BTreeNode();
+			BTreeNode s = new BTreeNode(m);
 			root = s;
 			s.setIsLeaf(false);
 			s.setCurrentlyStored(0);
@@ -40,10 +40,10 @@ public class BTree {
 		}
 	}
 	public void BTreeSplitChild(BTreeNode x, long val) {
-		
+
 		//*** changed for loops to start at zero since arrays being used start at 0
-		
-		BTreeNode z = new BTreeNode();
+
+		BTreeNode z = new BTreeNode(m);
 		BTreeNode y = x.getChildNode(0);
 		z.setIsLeaf(y.getIsLeaf());
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
@@ -56,7 +56,7 @@ public class BTree {
 			}
 		}
 		y.setCurrentlyStored(t-1);
-		
+
 		for(int j = x.getCurrentlyStored()+1; j > middle+1; j--) {		//what is i?
 			x.setChildPointer(x.getChildNode(j+1), j);
 		}
@@ -67,7 +67,7 @@ public class BTree {
 		x.setBTreeObject(y.getBTreeObject(t) ,middle+1);
 		x.setCurrentlyStored(x.getCurrentlyStored()+1);
 	}
-	
+
 	/**
 	 * check if the node contains the value. if it does increment the frequency and end insertion. 
 	 * if !found then if it is a leaf insert the node, if not a leaf then look for proper child node
@@ -75,6 +75,7 @@ public class BTree {
 	 * @param val
 	 */
 	public void insertNodeNonFull(BTreeNode node, long val) {	
+
 
 		BTreeObject obj = new BTreeObject(val);
 		int i = node.getCurrentlyStored();
@@ -88,21 +89,32 @@ public class BTree {
 		}
 		if(!found) {
 			if(node.getIsLeaf()) {
-				while(i >= 1 && val < node.getBTreeObject(i).getKey()) { //while i > 1 and val is les than the objects key
-					node.setBTreeObject(node.getBTreeObject(i-1),i) ;
+				while(i >= 1 && val < node.getBTreeObject(i).getKey()) { 		//check if val is in between keys in this node
+					node.setBTreeObject(node.getBTreeObject(i-1),i) ; 			//?????????????????????????
 					i--;
 				}
 				node.setBTreeObject(obj, i);
 				node.incrementCurrentlyStored();
 
 			}else {
-				while(i >= 1 && val < node.getBTreeObject(i).getKey()) { //while i > 1 and val is les than the objects key
+				while(i >= 1 && val < node.getBTreeObject(i).getKey()) { 		//check if val is in between keys in this node
 					i--;
 				}
 				i++;	// i now is equal to the child node location
-				node = node.getChildNode(i);
+				//				node = node.getChildNode(i);
+				if (node.getChildNode(i).getCurrentlyStored() < (2*t-1)) {
+					BTreeSplitChild(node, val);
+					if(val> node.getBTreeObject(i).getKey() ) {
+						i=i+1;
+					}
+				}
+				insertNodeNonFull(node.getChildNode(i), val);
 			}
 		}
+
 	}
-	
+
+	public void printTree() {
+		root.traverse();
+	}
 }

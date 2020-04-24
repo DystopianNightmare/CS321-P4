@@ -120,7 +120,14 @@ public class GeneBankCreateBTree {
 		//TESTING 1 INPUT
 		Long key = (long) 33;
 		
-//		tree.insertNode(key);
+//	the folllowing is to add XX number of values to tree and then print the tree
+		for(int i =0; i< 10; i++) {
+			long keytest = (long) (Math.random()*1000);
+			System.out.println(keytest);
+			tree.BTreeInsert(keytest);
+		}
+		tree.printTree();
+			
 		
 	}
 	public static void printUsage() {
