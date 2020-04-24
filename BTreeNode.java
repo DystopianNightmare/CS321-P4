@@ -22,7 +22,7 @@ public class BTreeNode {
 	public BTreeNode(int m)  {
 	isLeaf = true;
 	this.m = m;
-	objectArray = new BTreeObject[m-1];
+	objectArray = new BTreeObject[m];
 	childPointer = new BTreeNode[m];
 	currentlyStored = 0;
 	parentPointer = null;
@@ -70,14 +70,17 @@ public class BTreeNode {
 	public void traverse() {
 		int i = 0;
 		
-		for( i = 0; i <= this.getCurrentlyStored(); i++) {
+		for( i = 0; i < this.getCurrentlyStored(); i++) {
 			if(this.getIsLeaf() == false) {
 				childPointer[i].traverse();
 				
 			}
-			System.out.println(objectArray[i] +" "+ this.getIsRoot());
+			System.out.println(objectArray[i] +" "+ this.getIsLeaf());
+			System.out.println(this.currentlyStored);
 		}
 		
 		System.out.println(" ");
+		if (this.getIsLeaf() == false) 
+            childPointer[i].traverse(); 
 	}
 }

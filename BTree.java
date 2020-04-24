@@ -30,6 +30,7 @@ public class BTree {
 		
 		node = root;
 		if(node.getCurrentlyStored() == m-1) {
+			System.out.println(m +"m");
 			BTreeNode s = new BTreeNode(m);
 			root = s;
 			s.setIsLeaf(false);
@@ -39,28 +40,28 @@ public class BTree {
 			s.setIsRoot(true);
 			
 			
+			insertNodeNonFull(node,val);
+			BTreeSplitChild(s,val);
 			
-			BTreeSplitChild(s,1);
-			
-			insertNodeNonFull(s,val);
+//			insertNodeNonFull(s,val);
 		}else {
 			insertNodeNonFull(root, val);	
 		}
 	}
-	public void BTreeSplitChild(BTreeNode x, int zz) {
+	public void BTreeSplitChild(BTreeNode x, long zz) {
 
 		//*** changed for loops to start at zero since arrays being used start at 0
 
 		BTreeNode z = new BTreeNode(m);		//z = new right child
 		BTreeNode y = x.getChildNode(0);	//y = old root
-		x.setBTreeObject(y.getBTreeObject(middle-1), 0);
+		x.setBTreeObject(y.getBTreeObject(middle), 0);
 		x.incrementCurrentlyStored();
 		x.setChildPointer(z, 1);
 		z.setIsLeaf(y.getIsLeaf());
 		
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 		
-		for(int j =1; j<t-1; j++) {
+		for(int j =1; j<t; j++) {
 			z.setBTreeObject(y.getBTreeObject(j+middle), j-1); //z.key = y.key+t
 		}
 		if(!y.getIsLeaf()) {	//if y is not a leaf
@@ -68,10 +69,11 @@ public class BTree {
 				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
 			}
 		}
-		System.out.println(middle + "middle");
-		y.setCurrentlyStored(3);
+		
+		y.setCurrentlyStored(5);
 		z.setCurrentlyStored(middle-1);
 		x.setCurrentlyStored(1);
+		
 
 		for(int j = x.getCurrentlyStored()+1; j > middle+1; j--) {		//what is i?
 			x.setChildPointer(x.getChildNode(j+1), j);
@@ -82,6 +84,10 @@ public class BTree {
 		}
 		x.setBTreeObject(y.getBTreeObject(t) ,middle);
 		x.setCurrentlyStored(x.getCurrentlyStored());
+		
+		
+		
+		
 	}
 
 	public void insertNodeNonFull(BTreeNode node1, long val) {	
