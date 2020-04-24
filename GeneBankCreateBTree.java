@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class GeneBankCreateBTree {
 
-	private static Integer m; 		//degree to be used -- this is the value for degree
+	private static Integer t; 		//degree to be used -- this is the value for degree
 	//	private static BufferedReader br;
 	private static int cacheSize;		//if cache is used this will be the cache size
 	private static int debugLevel;		//to be used later
@@ -36,8 +36,8 @@ public class GeneBankCreateBTree {
 			}
 
 			//parse degree
-			m = Integer.parseInt(args[1]);	
-			if(m == 0) {
+			t = Integer.parseInt(args[1]);	
+			if(t == 0) {
 				//implement something to use the optimal degree
 			}
 			//get sequence length
@@ -55,8 +55,8 @@ public class GeneBankCreateBTree {
 		
 		//Get name of Binary file and make a new BTree
 		
-		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + m );	//This is the name of the binary file
-		BTree tree = new BTree(nameOfTree,m);
+		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + t );	//This is the name of the binary file
+		BTree tree = new BTree(nameOfTree,t);
 		
 		try {
 			Scanner scan = new Scanner(new FileReader(fileName));
@@ -113,14 +113,14 @@ public class GeneBankCreateBTree {
 
 			}
 			scan.close();
-			tree.print();
+			
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
 		//TESTING 1 INPUT
 		Long key = (long) 33;
 		
-		tree.insertNode(key);
+//		tree.insertNode(key);
 		
 	}
 	public static void printUsage() {
