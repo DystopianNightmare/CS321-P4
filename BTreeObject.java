@@ -20,5 +20,9 @@ public class BTreeObject implements Serializable {
 	public long getKey() {
 		return key;
 	}
+	
+	public String toString() {
+		return String.valueOf(key);
+	}
 }
 

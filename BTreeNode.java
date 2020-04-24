@@ -16,14 +16,14 @@ public class BTreeNode {
 	
 	private int m;
 	private BTreeObject[] objectArray;
-	private BTreeNode[] nodes;
+	
 	
 	//default constructor only to be used when creating Btree with no elements
 	public BTreeNode(int m)  {
 	isLeaf = true;
 	this.m = m;
-	objectArray = new BTreeObject[(m*2)-1];
-	childPointer = new BTreeNode[m*2];
+	objectArray = new BTreeObject[m-1];
+	childPointer = new BTreeNode[m];
 	currentlyStored = 0;
 	parentPointer = null;
 		
@@ -62,19 +62,22 @@ public class BTreeNode {
 		return currentlyStored == m*2-1;
 	}
 	public BTreeNode getChildNode(int i) {
-		return nodes[i];
+		return childPointer[i];
 	}
 	public void setChildPointer(BTreeNode node, int i) {
 		childPointer[i] = node;
 	}
 	public void traverse() {
+		int i = 0;
 		
-		for(int i = 0; i < this.getCurrentlyStored(); i++) {
+		for( i = 0; i <= this.getCurrentlyStored(); i++) {
 			if(this.getIsLeaf() == false) {
 				childPointer[i].traverse();
+				
 			}
-			System.out.println(objectArray[i] +" ");
+			System.out.println(objectArray[i] +" "+ this.getIsRoot());
 		}
 		
+		System.out.println(" ");
 	}
 }
