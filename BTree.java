@@ -90,35 +90,49 @@ public class BTree {
 		
 	}
 
-	public void insertNodeNonFull(BTreeNode node1, long val) {	
+public void insertNodeNonFull(BTreeNode node, long val) {	
 		int i = node.getCurrentlyStored();
+
 		if(node.getIsLeaf()) {
-			
-			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {				//this line and next i had to change i to i-1 -- probsaly going to have to for remainder as well
+
+			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {				//this line and next i had to change i to i-1 -- probaly going to have to for remainder as well
 				node.setBTreeObject(node.getBTreeObject(i-1), i);
 				i--;
 			}
 			BTreeObject obj = new BTreeObject(val);
-			node1.setBTreeObject(obj, i);
-			node.incrementCurrentlyStored();
+			node.setBTreeObject(obj, i);
+			node.incrementCurrentlyStored();	
 		}else{
-			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {
-				i--;
-			}
-			i++;
-			node = node.getChildNode(i);
+//			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) { <---- this isn't getting used
+//				i--;
+//			}
+			
+			node = node.getChildNode(i);								/// 	THIS FUCKING BREAKS IT!!!!!!!!!!!!!!!!!!11
+
 			if(node.getCurrentlyStored() ==  m-1) {
-				BTreeSplitChild(node, i);
-				if(val > node.getBTreeObject(i).getKey()) {
-					i++;
-				}
+				BTreeNode s = node.getParentPointer();
+				//I can also comment out most of this and it doesn't change the results at all
+				s.setIsLeaf(false);
+				s.setChildPointer(node, s.getCurrentlyStored());
+				s.setBTreeObject(node.getBTreeObject(middle), s.getCurrentlyStored());
+				node.setParentPointer(s);
+				//Until here
+
+				BTreeSplitChild(s, val);
+				i = s.getCurrentlyStored();
+				
+				
 			}
-			insertNodeNonFull(node.getChildNode(i), val);
+			insertNodeNonFull(node, val);
+			
 		}
 	}
 
 	public void printTree() {
 		System.out.println(" ");	//blank space
 		root.traverse();
+	}
+	public void promote() {
+
 	}
 }
