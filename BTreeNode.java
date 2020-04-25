@@ -48,6 +48,12 @@ public class BTreeNode {
 	public boolean getIsRoot() {
 		return isRoot;
 	}
+	public BTreeNode getParentPointer() {
+		return parentPointer;
+	}
+	public void setParentPointer(BTreeNode parentPointer) {
+		this.parentPointer = parentPointer;
+	}
 	public void setCurrentlyStored(int i) {
 		currentlyStored = i;
 	}
@@ -75,8 +81,8 @@ public class BTreeNode {
 				childPointer[i].traverse();
 				
 			}
-			System.out.println(objectArray[i] +" "+ this.getIsLeaf());
-			System.out.println(this.currentlyStored);
+			System.out.println(objectArray[i] +" leaf = "+ this.getIsLeaf()+ "              curr stored in node = "+this.getCurrentlyStored());
+			
 		}
 		
 		System.out.println(" ");

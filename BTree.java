@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 public class BTree {
 
-	private BTreeNode root, current, parent, child, node;
+	private BTreeNode root, curr, parent, child, node;
 	private int m;
 	private File file;
 	private int t;
@@ -22,103 +22,117 @@ public class BTree {
 
 	public BTreeNode BTreeCreateNode()  {
 		node = new BTreeNode(m);
-		
+
 		return node;
 	}
 
-	public void BTreeInsert(long val)  {
-		
+	public void BTreeInsert(long val)  {																					// INSERT
+
 		node = root;
 		if(node.getCurrentlyStored() == m-1) {
-			System.out.println(m +"m");
+
 			BTreeNode s = new BTreeNode(m);
 			root = s;
 			s.setIsLeaf(false);
 			s.setCurrentlyStored(0);
 			s.setChildPointer(node, 0);
-			
+
 			s.setIsRoot(true);
-			
-			
+
+
 			insertNodeNonFull(node,val);
 			BTreeSplitChild(s,val);
-			
-//			insertNodeNonFull(s,val);
+
+			//			insertNodeNonFull(s,val);
 		}else {
 			insertNodeNonFull(root, val);	
 		}
 	}
-	public void BTreeSplitChild(BTreeNode x, long zz) {
+	public void BTreeSplitChild(BTreeNode x, long zz) {																		// SPLIT CHILD
 
 		//*** changed for loops to start at zero since arrays being used start at 0
 
 		BTreeNode z = new BTreeNode(m);		//z = new right child
-		BTreeNode y = x.getChildNode(0);	//y = old root
-		x.setBTreeObject(y.getBTreeObject(middle), 0);
+		BTreeNode y = x.getChildNode(x.getCurrentlyStored());	//y = old root
+		y.setIsLeaf(true);
+
+		y.setParentPointer(x);
+		z.setParentPointer(x);
+
+		x.setBTreeObject(y.getBTreeObject(middle), x.getCurrentlyStored());
 		x.incrementCurrentlyStored();
-		x.setChildPointer(z, 1);
+		x.setChildPointer(z, x.getCurrentlyStored());
 		z.setIsLeaf(y.getIsLeaf());
-		
+
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
-		
+
 		for(int j =1; j<t; j++) {
 			z.setBTreeObject(y.getBTreeObject(j+middle), j-1); //z.key = y.key+t
 		}
+
 		if(!y.getIsLeaf()) {	//if y is not a leaf
 			for(int j = 1; j < t-1;j++) {
-				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
+				z.setChildPointer(y.getChildNode(j+middle-1), j-1); 		//sets z's child pointers to that of y+t
 			}
 		}
-		
-		y.setCurrentlyStored(5);
-		z.setCurrentlyStored(middle-1);
-		x.setCurrentlyStored(1);
-		
 
-		for(int j = x.getCurrentlyStored()+1; j > middle+1; j--) {		//what is i?
-			x.setChildPointer(x.getChildNode(j+1), j);
+		y.setCurrentlyStored(middle);
+		z.setCurrentlyStored(middle-1);
+
+		for(int j = x.getCurrentlyStored(); j > middle; j--) {		//what is i?
+			x.setChildPointer(x.getChildNode(j), j-1);
 		}
-		x.setChildPointer(z, middle+1);
+
+		x.setChildPointer(z, x.getCurrentlyStored());
+
 		for(int j = x.getCurrentlyStored(); j > middle; j--) {
 			z.setBTreeObject(x.getBTreeObject(j), j+1);
 		}
 		x.setBTreeObject(y.getBTreeObject(t) ,middle);
-		x.setCurrentlyStored(x.getCurrentlyStored());
-		
-		
-		
-		
+
 	}
 
-	public void insertNodeNonFull(BTreeNode node1, long val) {	
+	public void insertNodeNonFull(BTreeNode node, long val) {	
 		int i = node.getCurrentlyStored();
+
 		if(node.getIsLeaf()) {
-			
-			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {				//this line and next i had to change i to i-1 -- probsaly going to have to for remainder as well
+
+			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {				//this line and next i had to change i to i-1 -- probaly going to have to for remainder as well
 				node.setBTreeObject(node.getBTreeObject(i-1), i);
 				i--;
 			}
 			BTreeObject obj = new BTreeObject(val);
-			node1.setBTreeObject(obj, i);
-			node.incrementCurrentlyStored();
+			node.setBTreeObject(obj, i);
+			node.incrementCurrentlyStored();	
 		}else{
 			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {
 				i--;
 			}
-			i++;
-			node = node.getChildNode(i);
+			
+			node = node.getChildNode(i);								/// 	THIS FUCKING BREAKS IT!!!!!!!!!!!!!!!!!!11
+
 			if(node.getCurrentlyStored() ==  m-1) {
-				BTreeSplitChild(node, i);
-				if(val > node.getBTreeObject(i).getKey()) {
-					i++;
-				}
+				BTreeNode s = node.getParentPointer();
+				s.setIsLeaf(false);
+				s.setChildPointer(node, s.getCurrentlyStored());
+				s.setBTreeObject(node.getBTreeObject(middle), s.getCurrentlyStored());
+				node.setParentPointer(s);
+
+				BTreeSplitChild(s, val);
+				i = s.getCurrentlyStored();
+				
+				
 			}
-			insertNodeNonFull(node.getChildNode(i), val);
+			insertNodeNonFull(node, val);
+			
 		}
 	}
 
 	public void printTree() {
 		System.out.println(" ");	//blank space
 		root.traverse();
+	}
+	public void promote() {
+
 	}
 }
