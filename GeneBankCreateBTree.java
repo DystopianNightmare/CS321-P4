@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class GeneBankCreateBTree {
 
-	private static Integer m; 		//degree to be used
+	private static Integer t; 		//degree to be used -- this is the value for degree
 	//	private static BufferedReader br;
 	private static int cacheSize;		//if cache is used this will be the cache size
 	private static int debugLevel;		//to be used later
@@ -36,8 +36,8 @@ public class GeneBankCreateBTree {
 			}
 
 			//parse degree
-			m = Integer.parseInt(args[1]);	
-			if(m == 0) {
+			t = Integer.parseInt(args[1]);	
+			if(t == 0) {
 				//implement something to use the optimal degree
 			}
 			//get sequence length
@@ -54,8 +54,9 @@ public class GeneBankCreateBTree {
 		String fileName = args[2];
 		
 		//Get name of Binary file and make a new BTree
-		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + m );	//This is the name of the binary file
-		BTree tree = new BTree(nameOfTree,m);
+		
+		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + t );	//This is the name of the binary file
+		BTree tree = new BTree(nameOfTree,t);
 		
 		try {
 			Scanner scan = new Scanner(new FileReader(fileName));
@@ -80,26 +81,30 @@ public class GeneBankCreateBTree {
 					for(int i = 0; i < character.length()-sequenceLength+1;i++) {
 						String s = "";
 						for(int j = 0; j < sequenceLength; j++) {
-							if(character.charAt(i+j) == 'a') {
+							if(character.charAt(i+j) == 'a' || character.charAt(i+j) == 'A') {
 								s += "00";
 							}
-							if(character.charAt(i+j) == 't') {
+							if(character.charAt(i+j) == 't' || character.charAt(i+j) == 'T') {
 								s += "11";
 							}
-							if(character.charAt(i+j) == 'c') {
+							if(character.charAt(i+j) == 'c' || character.charAt(i+j) == 'C') {
 								s += "01";
 							}
-							if(character.charAt(i+j) == 'g') {
+							if(character.charAt(i+j) == 'g' || character.charAt(i+j) == 'G') {
 								s += "10";
 							}
+							if(character.charAt(i+j) == 'n' || character.charAt(i+j) == 'N') {
+								s += "n";
+							}
+							
 						}
 						//OKAY! We now have s which we will use
 						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
 						
-						
+						if(!s.contains("n")) {
 						Long key = Long.parseLong(s);
-//						BTreeObject obj = new BTreeObject(key);
-//						tree.addObjectToNode(obj);
+						}
+//						tree.addObjectToNode(key);
 
 						
 					}
@@ -108,15 +113,22 @@ public class GeneBankCreateBTree {
 
 			}
 			scan.close();
-			tree.print();
+			
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
 		//TESTING 1 INPUT
-		Long key = (long) 111111111;
-		BTreeObject obj = new BTreeObject(key);
-		tree.addObjectToNode(obj);
-		tree.print();
+		Long key = (long) 33;
+		
+//	the folllowing is to add XX number of values to tree and then print the tree
+		for(int i =0; i< 12; i++) {
+			long keytest = (long) i;
+			System.out.println(keytest);
+			tree.BTreeInsert(keytest);
+		}
+		tree.printTree();
+			
+		
 	}
 	public static void printUsage() {
 		System.out.println("java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");

@@ -1,83 +1,92 @@
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 
 public class BTreeNode {
 
-private int[] childPointer;
-private int parentPointer;
-private int currentlyStored;
-private boolean isLeaf, isRoot;
-private byte[] node;
-private int m;
-private File file2;
-private int testOffset;
-private int testLength;
+	private BTreeNode[] childPointer;
+	private BTreeNode parentPointer;
+	private int currentlyStored;
+	private boolean isLeaf, isRoot;
+	
+	private int m;
+	private BTreeObject[] objectArray;
+	
+	
+	//default constructor only to be used when creating Btree with no elements
+	public BTreeNode(int m)  {
+	isLeaf = true;
+	this.m = m;
+	objectArray = new BTreeObject[m];
+	childPointer = new BTreeNode[m];
+	currentlyStored = 0;
+	parentPointer = null;
+		
+	}
+	public BTreeObject getBTreeObject(int i) {
+		return objectArray[i];
+	}
+	
+	public void  setBTreeObject(BTreeObject obj, int i) {
+		objectArray[i] = obj;
+	}
+	
+	public boolean getIsLeaf() {
+		return isLeaf;
+	}
+	public void setIsRoot(boolean b) {
+		isRoot = b;
+	}
+	public void setIsLeaf(boolean b) {
+		isLeaf = b;
+	}
+	public boolean getIsRoot() {
+		return isRoot;
+	}
+	public BTreeNode getParentPointer() {
+		return parentPointer;
+	}
+	public void setParentPointer(BTreeNode parentPointer) {
+		this.parentPointer = parentPointer;
+	}
+	public void setCurrentlyStored(int i) {
+		currentlyStored = i;
+	}
 
-//default constructor only to be used when creating Btree with no elements
-	public BTreeNode(File file, int m) throws IOException {
-		node = new byte[4096]; 
-		isLeaf = true;
-		currentlyStored = 0;
-		this.m = m;
-		copyMToNode(m);
-		//
-		testLength = 200;
-		
-		 file2 = new File("test");
-		OutputStream output = null;
-		
-		 output = new FileOutputStream(file2, true);
-		 
-		String s = "test";
-		
-		output.write(node, 0, testLength );
-		System.out.println("here");
-	
+	public int getCurrentlyStored() {
+		return currentlyStored;
 	}
-	public File getFile() {
-		return file2;
+	public void incrementCurrentlyStored() {
+		currentlyStored++;
 	}
-	
-//	public void addObj(long val) throws IOException {
-//		currentlyStored++;
-//		BTreeObject obj = new BTreeObject(val);
-//		ByteArrayOutputStream boas = new ByteArrayOutputStream();
-//		ObjectOutputStream oos = new ObjectOutputStream(boas);
-//		oos.writeObject(obj);
-//		byte[] data = boas.toByteArray();
-//		copyTreeObjectToNode(data);
-//		
-//		
-//	}
-//	public void copyTreeObjectToNode(byte[] data) {
-//		for(int i = 0; i < data.length; i++) {
-//			node[(200*currentlyStored)+i] = data[i];
-//		}
-//	}
-//	public int getM() {
-//		return m;
-//	}
-//	public byte[] getNode() {
-//		return node;
-//	}
-	public void copyMToNode(int m) throws IOException {
-		Integer m2 = (Integer) (m);
-		ByteArrayOutputStream boas = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(boas);
-		oos.writeObject(m2);
-		byte[] data = boas.toByteArray();
-		for(int i = 0; i < data.length; i++) {
-			node[(200*currentlyStored)+i] = data[i];
+	public boolean isFull() {
+		return currentlyStored == m*2-1;
+	}
+	public BTreeNode getChildNode(int i) {
+		return childPointer[i];
+	}
+	public void setChildPointer(BTreeNode node, int i) {
+		childPointer[i] = node;
+	}
+	public void traverse() {
+		int i = 0;
+		
+		for( i = 0; i < this.getCurrentlyStored(); i++) {
+			if(this.getIsLeaf() == false) {
+				childPointer[i].traverse();
+				
+			}
+			System.out.println(objectArray[i] +" leaf = "+ this.getIsLeaf()+ "              curr stored in node = "+this.getCurrentlyStored());
+			
 		}
-	}
-	
-	public void printNode() {
-		for(int i = 0; i < 4096; i++) {
-			System.out.println(node[i]);
-		}
+		
+		System.out.println(" ");
+		if (this.getIsLeaf() == false) 
+            childPointer[i].traverse(); 
 	}
 }
