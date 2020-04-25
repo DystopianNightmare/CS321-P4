@@ -61,14 +61,14 @@ public class BTree {
 
 		x.setBTreeObject(y.getBTreeObject(middle), x.getCurrentlyStored());
 		x.incrementCurrentlyStored();
-		System.out.println(x.getCurrentlyStored() );
+		
 		x.setChildPointer(z, x.getCurrentlyStored());
 		z.setIsLeaf(y.getIsLeaf());
 
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 
-		for(int j =0; j<t; j++) {
-			z.setBTreeObject(y.getBTreeObject(j+middle), j); //z.key = y.key+t
+		for(int j =1; j<t; j++) {
+			z.setBTreeObject(y.getBTreeObject(j+middle), j-1); //z.key = y.key+t
 		}
 
 		if(!y.getIsLeaf()) {	//if y is not a leaf
@@ -78,7 +78,7 @@ public class BTree {
 		}
 
 		y.setCurrentlyStored(middle);
-		z.setCurrentlyStored(middle-1);
+		z.setCurrentlyStored(middle-2);
 
 		for(int j = x.getCurrentlyStored(); j > middle; j--) {		//what is i?
 			x.setChildPointer(x.getChildNode(j), j-1);
@@ -87,7 +87,7 @@ public class BTree {
 		x.setChildPointer(z, x.getCurrentlyStored());
 
 		for(int j = x.getCurrentlyStored(); j > middle; j--) {
-			z.setBTreeObject(x.getBTreeObject(j-1), j);
+			z.setBTreeObject(x.getBTreeObject(j), j+1);
 		}
 		x.setBTreeObject(y.getBTreeObject(t) ,middle);
 
@@ -102,6 +102,7 @@ public class BTree {
 				node.setBTreeObject(node.getBTreeObject(i-1), i);
 				i--;
 			}
+			
 			BTreeObject obj = new BTreeObject(val);
 			node.setBTreeObject(obj, i);
 			node.incrementCurrentlyStored();	
