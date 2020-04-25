@@ -61,18 +61,19 @@ public class BTree {
 
 		x.setBTreeObject(y.getBTreeObject(middle), x.getCurrentlyStored());
 		x.incrementCurrentlyStored();
+		System.out.println(x.getCurrentlyStored() );
 		x.setChildPointer(z, x.getCurrentlyStored());
 		z.setIsLeaf(y.getIsLeaf());
 
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 
-		for(int j =1; j<t; j++) {
-			z.setBTreeObject(y.getBTreeObject(j+middle), j-1); //z.key = y.key+t
+		for(int j =0; j<t; j++) {
+			z.setBTreeObject(y.getBTreeObject(j+middle), j); //z.key = y.key+t
 		}
 
 		if(!y.getIsLeaf()) {	//if y is not a leaf
-			for(int j = 1; j < t-1;j++) {
-				z.setChildPointer(y.getChildNode(j+middle-1), j-1); 		//sets z's child pointers to that of y+t
+			for(int j = 0; j < t;j++) {
+				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
 			}
 		}
 
@@ -86,7 +87,7 @@ public class BTree {
 		x.setChildPointer(z, x.getCurrentlyStored());
 
 		for(int j = x.getCurrentlyStored(); j > middle; j--) {
-			z.setBTreeObject(x.getBTreeObject(j), j+1);
+			z.setBTreeObject(x.getBTreeObject(j-1), j);
 		}
 		x.setBTreeObject(y.getBTreeObject(t) ,middle);
 
@@ -105,8 +106,9 @@ public class BTree {
 			node.setBTreeObject(obj, i);
 			node.incrementCurrentlyStored();	
 		}else{
-			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {
-				i--;
+			 i = 0;
+			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+				i++;
 			}
 			
 			node = node.getChildNode(i);								/// 	THIS FUCKING BREAKS IT!!!!!!!!!!!!!!!!!!11
@@ -114,6 +116,7 @@ public class BTree {
 			if(node.getCurrentlyStored() ==  m-1) {
 				BTreeNode s = node.getParentPointer();
 				s.setIsLeaf(false);
+			
 				s.setChildPointer(node, s.getCurrentlyStored());
 				s.setBTreeObject(node.getBTreeObject(middle), s.getCurrentlyStored());
 				node.setParentPointer(s);
@@ -121,7 +124,7 @@ public class BTree {
 				BTreeSplitChild(s, val);
 				i = s.getCurrentlyStored();
 				
-				
+				node = s;
 			}
 			insertNodeNonFull(node, val);
 			
