@@ -72,7 +72,7 @@ public class BTree {
 
 		BTreeNode z = new BTreeNode(m);		//z = new right child
 		BTreeNode y = parent.getChildNode(parent.getCurrentlyStored());	//y = old root
-		z.setIsLeaf(true);
+		z.setIsLeaf(y.getIsLeaf());
 
 		y.setParentPointer(parent);
 		z.setParentPointer(parent);
@@ -90,8 +90,8 @@ public class BTree {
 		}
 
 		if(!y.getIsLeaf()) {	//if y is not a leaf
-			for(int j = 0; j < t;j++) {
-				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
+			for(int j = 1; j < t+1;j++) {
+				z.setChildPointer(y.getChildNode(j+middle), j-1); 		//sets z's child pointers to that of y+t
 			}
 		}
 
