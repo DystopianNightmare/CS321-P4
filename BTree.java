@@ -72,7 +72,13 @@ public class BTree {
 		//*** changed for loops to start at zero since arrays being used start at 0
 
 		BTreeNode z = new BTreeNode(m);		//z = new right child
-		BTreeNode y = parent.getChildNode(parent.getCurrentlyStored());	//y = old root
+//		BTreeNode y = parent.getChildNode(parent.getCurrentlyStored());	//y = old root
+		int i = parent.getCurrentlyStored();
+		i = 0;
+		while(i < parent.getCurrentlyStored() && zz > parent.getBTreeObject(i).getKey()) {
+			i++;
+		}
+		BTreeNode y = parent.getChildNode(i);
 		z.setIsLeaf(y.getIsLeaf());
 
 		y.setParentPointer(parent);
@@ -82,7 +88,6 @@ public class BTree {
 		parent.incrementCurrentlyStored();
 		
 		parent.setChildPointer(z, parent.getCurrentlyStored());
-
 
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 		// take top half objects from array y and put in array z
@@ -103,7 +108,7 @@ public class BTree {
 //			parent.setChildPointer(parent.getChildNode(j), j-1);
 //		}
 
-		parent.setChildPointer(z, parent.getCurrentlyStored());
+//		parent.setChildPointer(z, parent.getCurrentlyStored());
 
 
 	}
@@ -126,7 +131,7 @@ public class BTree {
 		
 		// if node is not a leaf
 		else{
-			 i = 0;
+			i = 0;
 			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
 				i++;
 			}
