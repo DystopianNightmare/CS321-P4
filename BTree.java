@@ -25,12 +25,30 @@ public class BTree {
 
 		return node;
 	}
+	
+	public boolean checkChildIsFull(BTreeNode node, long val) {
+		int i = 0;
+		while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+			i++;
+		}
+		if (node.getIsLeaf()== true) {
+			return true;
+		}
+		BTreeNode childNode = node.getChildNode(i);
+		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf()) {
+			return true;
+		}
+		else if (childNode.getCurrentlyStored() == m-1 && !childNode.getIsLeaf()) {
+			checkChildIsFull(node, val);
+			}
+		return false;
+	}
 
+	
 	public void BTreeInsert(long val)  {																					// INSERT
 
 		node = root;
-		if(node.getCurrentlyStored() == m-1) {
-
+		if(node.getCurrentlyStored() == m-1 && checkChildIsFull(node, val)) {
 			BTreeNode s = new BTreeNode(m);
 			root = s;
 			s.setIsLeaf(false);
@@ -54,7 +72,7 @@ public class BTree {
 
 		BTreeNode z = new BTreeNode(m);		//z = new right child
 		BTreeNode y = parent.getChildNode(parent.getCurrentlyStored());	//y = old root
-		y.setIsLeaf(true);
+		z.setIsLeaf(true);
 
 		y.setParentPointer(parent);
 		z.setParentPointer(parent);
@@ -63,7 +81,7 @@ public class BTree {
 		parent.incrementCurrentlyStored();
 		
 		parent.setChildPointer(z, parent.getCurrentlyStored());
-		z.setIsLeaf(y.getIsLeaf());
+//		z.setIsLeaf(y.getIsLeaf());
 
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 		// take top half objects from array y and put in array z
@@ -96,6 +114,7 @@ public class BTree {
 	public void insertNodeNonFull(BTreeNode node, long val) {	
 		int i = node.getCurrentlyStored();
 
+		// if node is a leaf
 		if(node.getIsLeaf()) {
 
 			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {				//this line and next i had to change i to i-1 -- probaly going to have to for remainder as well
@@ -106,7 +125,10 @@ public class BTree {
 			BTreeObject obj = new BTreeObject(val);
 			node.setBTreeObject(obj, i);
 			node.incrementCurrentlyStored();	
-		}else{
+		}
+		
+		// if node is not a leaf
+		else{
 			 i = 0;
 			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
 				i++;
