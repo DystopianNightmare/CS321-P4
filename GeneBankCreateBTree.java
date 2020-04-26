@@ -121,10 +121,11 @@ public class GeneBankCreateBTree {
 		Long key = (long) 33;
 		
 //	the folllowing is to add XX number of values to tree and then print the tree
-		for(int i =0; i< 30; i++) {
+		for(int i =0; i< 18; i++) {
 			long keytest = (long) i;
 			System.out.println(keytest);
-			if(keytest == 11) {
+			if(keytest == 12) {
+//				tree.printTree();
 				System.out.println("testing");
 			}
 			tree.BTreeInsert(keytest);
