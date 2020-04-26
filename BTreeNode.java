@@ -6,17 +6,17 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 public class BTreeNode {
 
 	private BTreeNode[] childPointer;
 	private BTreeNode parentPointer;
-	private int currentlyStored;
+	private int currentlyStored; //number of keys in node?
 	private boolean isLeaf, isRoot;
 	
-	private int m;
+	private int m; //
 	private BTreeObject[] objectArray;
-	
 	
 	//default constructor only to be used when creating Btree with no elements
 	public BTreeNode(int m)  {
@@ -26,6 +26,7 @@ public class BTreeNode {
 	childPointer = new BTreeNode[m];
 	currentlyStored = 0;
 	parentPointer = null;
+	
 		
 	}
 	public BTreeObject getBTreeObject(int i) {
@@ -48,6 +49,12 @@ public class BTreeNode {
 	public boolean getIsRoot() {
 		return isRoot;
 	}
+	public BTreeNode getParentPointer() {
+		return parentPointer;
+	}
+	public void setParentPointer(BTreeNode parentPointer) {
+		this.parentPointer = parentPointer;
+	}
 	public void setCurrentlyStored(int i) {
 		currentlyStored = i;
 	}
@@ -67,6 +74,7 @@ public class BTreeNode {
 	public void setChildPointer(BTreeNode node, int i) {
 		childPointer[i] = node;
 	}
+	
 	public void traverse() {
 		int i = 0;
 		
@@ -75,12 +83,14 @@ public class BTreeNode {
 				childPointer[i].traverse();
 				
 			}
-			System.out.println(objectArray[i] +" "+ this.getIsLeaf());
-			System.out.println(this.currentlyStored);
+			System.out.println("Node: " + this.toString() + "	" + objectArray[i] +" leaf = "+ this.getIsLeaf()+ "		keys stored in node = "+this.getCurrentlyStored()+ "	 root = "+this.getIsRoot()
+			+ " 	parent = "+ this.getParentPointer() + " 	children = "+ Arrays.toString(childPointer));
+			
 		}
 		
 		System.out.println(" ");
 		if (this.getIsLeaf() == false) 
             childPointer[i].traverse(); 
 	}
+
 }
