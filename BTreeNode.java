@@ -23,7 +23,7 @@ public class BTreeNode {
 	isLeaf = true;
 	this.m = m;
 	objectArray = new BTreeObject[m];
-	childPointer = new BTreeNode[m];
+	childPointer = new BTreeNode[m+1];
 	currentlyStored = 0;
 	parentPointer = null;
 		

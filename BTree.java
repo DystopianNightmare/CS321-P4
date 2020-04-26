@@ -72,7 +72,7 @@ public class BTree {
 
 		BTreeNode z = new BTreeNode(m);		//z = new right child
 		BTreeNode y = parent.getChildNode(parent.getCurrentlyStored());	//y = old root
-		z.setIsLeaf(true);
+		z.setIsLeaf(y.getIsLeaf());
 
 		y.setParentPointer(parent);
 		z.setParentPointer(parent);
@@ -81,33 +81,29 @@ public class BTree {
 		parent.incrementCurrentlyStored();
 		
 		parent.setChildPointer(z, parent.getCurrentlyStored());
-//		z.setIsLeaf(y.getIsLeaf());
+
 
 		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 		// take top half objects from array y and put in array z
-		for(int j =1; j<t+1; j++) {
-			z.setBTreeObject(y.getBTreeObject(j+middle-1), j-1); //z.key = y.key+t
+		for(int j =0; j<middle; j++) {
+			z.setBTreeObject(y.getBTreeObject(j+middle), j); //z.key = y.key+t
 		}
 
 		if(!y.getIsLeaf()) {	//if y is not a leaf
-			for(int j = 0; j < m-1;j++) {
-				z.setChildPointer(y.getChildNode(j+middle-1), j); 		//sets z's child pointers to that of y+t
+			for(int j = 0; j < middle+1;j++) {
+				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
 			}
 		}
 
 		y.setCurrentlyStored(middle-1);
 		z.setCurrentlyStored(middle);			// -1 ????
 
-//		for(int j = parent.getCurrentlyStored(); j > middle; j--) {		//what is i?
+//		for(int j = parent.getCurrentlyStored(); j > middle+1; j--) {		//what is i?
 //			parent.setChildPointer(parent.getChildNode(j), j-1);
 //		}
 
 		parent.setChildPointer(z, parent.getCurrentlyStored());
-//
-//		for(int j = parent.getCurrentlyStored(); j > middle; j--) {
-//			z.setBTreeObject(parent.getBTreeObject(j), j+1);
-//		}
-//		parent.setBTreeObject(y.getBTreeObject(t) ,middle);				//?? this makes no sense
+
 
 	}
 
@@ -141,7 +137,20 @@ public class BTree {
 				
 				insertNodeNonFull(childNode,val);
 				BTreeSplitChild(node,val);
-
+				
+				
+				
+//				BTreeNode parentNode = childNode.getParentPointer();
+//				parentNode.setIsLeaf(false);
+//			
+//				parentNode.setChildPointer(childNode, parentNode.getCurrentlyStored());
+//				parentNode.setBTreeObject(childNode.getBTreeObject(middle), parentNode.getCurrentlyStored());
+//				childNode.setParentPointer(parentNode);
+//
+//				BTreeSplitChild(parentNode, val);
+//				i = parentNode.getCurrentlyStored();
+//				
+//				childNode = parentNode;
 			}
 			else {
 				insertNodeNonFull(childNode, val);
@@ -153,8 +162,27 @@ public class BTree {
 	public void printTree() {
 		System.out.println(" ");	//blank space
 		root.traverse();
+		print();
 	}
-	public void promote() {
+	   public void print () {
+		    // Print a textual representation of this B-tree.
+		        printSubtree(root, "");
+		    }
 
-	}
+		    private static void printSubtree (BTreeNode top, String indent) {
+		    // Print a textual representation of the subtree of this B-tree whose
+		    // topmost node is top, indented by the string of spaces indent.
+		        if (top == null)
+		            System.out.println(indent + "o");
+		        else {
+		            System.out.println(indent + "o-->");
+		            boolean isLeaf = top.getIsLeaf();
+		            String childIndent = indent + "    ";
+		            for (int i = 0; i < top.getCurrentlyStored(); i++) {
+		                if (! isLeaf)  printSubtree(top.getChildNode(i), childIndent);
+		                System.out.println(childIndent + top.getBTreeObject(i).getKey());
+		            }
+		            if (! isLeaf)  printSubtree(top.getChildNode(top.getCurrentlyStored()), childIndent);
+		        }
+		    }
 }
