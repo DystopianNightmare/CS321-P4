@@ -71,7 +71,7 @@ public class GeneBankCreateBTree {
 					
 					while(!line.startsWith("//")) {
 						for(int i = 0; i < line.length(); i++) {
-							if(line.charAt(i) == 'a' || line.charAt(i) == 'c' || line.charAt(i) == 'g' || line.charAt(i) == 't') {
+							if(line.charAt(i) == 'a' || line.charAt(i) == 'c' || line.charAt(i) == 'g' || line.charAt(i) == 't' || line.charAt(i) == 'n'|| line.charAt(i) == 'A'|| line.charAt(i) == 'C'|| line.charAt(i) == 'G'|| line.charAt(i) == 'T') {
 								character += line.charAt(i);
 							}
 						}
@@ -102,9 +102,11 @@ public class GeneBankCreateBTree {
 						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
 						
 						if(!s.contains("n")) {
-						Long key = Long.parseLong(s);
+							System.out.println(s);
+							Long key = Long.parseLong(s);
+							tree.BTreeInsert(key);
 						}
-//						tree.addObjectToNode(key);
+						
 
 						
 					}
@@ -118,15 +120,15 @@ public class GeneBankCreateBTree {
 			e.printStackTrace();
 		}
 		//TESTING 1 INPUT
-		Long key = (long) 33;
+//		Long key = (long) 33;
+//		
+////	the folllowing is to add XX number of values to tree and then print the tree
+//		for(int i =0; i<1000;i++) {
+//			long keytest = (long) Math.floor(i/99);
+//			System.out.println(keytest);
+//			
+//			tree.BTreeInsert(keytest);
 		
-//	the folllowing is to add XX number of values to tree and then print the tree
-		for(int i =0; i< 12; i++) {
-			long keytest = (long) i;
-			System.out.println(keytest);
-			
-			tree.BTreeInsert(keytest);
-		}
 		tree.printTree();
 			
 		
