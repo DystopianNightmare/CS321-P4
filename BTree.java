@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 
 public class BTree {
 
@@ -70,7 +72,7 @@ public class BTree {
 			return true;
 		}
 		BTreeNode childNode = node.getChildNode(i);
-		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf()) {
+		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf() ) {
 			return true;
 		}
 		else if (childNode.getCurrentlyStored() == m-1 && !childNode.getIsLeaf()) {
@@ -94,6 +96,7 @@ public class BTree {
 			s.setCurrentlyStored(0);
 			s.setChildPointer(node, 0);
 			s.setIsRoot(true);
+			
 			insertNodeNonFull(node,val);
 			BTreeSplitChild(s,val);
 		}else {
@@ -104,6 +107,7 @@ public class BTree {
 
 		//set Z equal to a new null node, Y is equal to the appropriate child node
 		BTreeNode z = new BTreeNode(m);		//z = new right child
+		node=parent;
 		int i = parent.getCurrentlyStored();
 		i = 0;
 		while(i < parent.getCurrentlyStored() && zz > parent.getBTreeObject(i).getKey()) {
@@ -119,15 +123,17 @@ public class BTree {
 		// promote middle-1 key to parent 
 		i = parent.getCurrentlyStored();
 		while(i >= 1 && zz < parent.getBTreeObject(i-1).getKey()) {
-			node.setBTreeObject(parent.getBTreeObject(i-1), i);
+			parent.setBTreeObject(parent.getBTreeObject(i-1), i);
 			i--;
 		}
+		
 		parent.setBTreeObject(y.getBTreeObject(middle-1), i);
 		parent.incrementCurrentlyStored();
 		
 		// take top half objects from array y and put in array z
-		for(int j =0; j<middle; j++) {
-			z.setBTreeObject(y.getBTreeObject(j+middle), j); //z.key = y.key+t
+		int tmp = y.getCurrentlyStored()/2;
+		for(int j =0; j<tmp; j++) {
+			z.setBTreeObject(y.getBTreeObject(j+tmp), j); //z.key = y.key+t
 		}
 		
 		
@@ -188,30 +194,61 @@ public class BTree {
 		}
 	}
 
+	
+	
+	public void dumpFile(BTree bTree) {
+		String dumpFile = "dump";
+		try {
+			PrintWriter outputStream = new PrintWriter(dumpFile);
+			for (int i =0; i <linearTable.getCapacity(); i++) {
+				if (doubleTable.getArray()[i] != null) {
+					outputStream.println(doubleTable.toSting(i));
+				}
+		}
+		outputStream.close();
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} 
+
+
+
+	public void printing(BTreeNode top) {
+		boolean isLeaf = top.getIsLeaf();
+		for (int i = 0; i < top.getCurrentlyStored(); i++) {
+			if (! isLeaf)  printing(top.getChildNode(i));
+			System.out.println(childIndent + top.getBTreeObject(i).getKey());
+		}
+		if (! isLeaf)  printing(top.getChildNode(top.getCurrentlyStored()));
+
+	}	
+	
 	public void printTree() {
 		System.out.println(" ");	//blank space
 		root.traverse();
 		print();
 	}
-	   public void print () {
-		    // Print a textual representation of this B-tree.
-		        printSubtree(root, "");
-		    }
+	
+	
+	
+	public void print () {
+		// Print a textual representation of this B-tree.
+		printSubtree(root, "");
+	}
 
-		    private static void printSubtree (BTreeNode top, String indent) {
-		    // Print a textual representation of the subtree of this B-tree whose
-		    // topmost node is top, indented by the string of spaces indent.
-		        if (top == null)
-		            System.out.println(indent + "o");
-		        else {
-		            System.out.println(indent + "o-->");
-		            boolean isLeaf = top.getIsLeaf();
-		            String childIndent = indent + "    ";
-		            for (int i = 0; i < top.getCurrentlyStored(); i++) {
-		                if (! isLeaf)  printSubtree(top.getChildNode(i), childIndent);
-		                System.out.println(childIndent + top.getBTreeObject(i).getKey());
-		            }
-		            if (! isLeaf)  printSubtree(top.getChildNode(top.getCurrentlyStored()), childIndent);
-		        }
-		    }
+	private static void printSubtree (BTreeNode top, String indent) {
+		// Print a textual representation of the subtree of this B-tree whose
+		// topmost node is top, indented by the string of spaces indent.
+		if (top == null)
+			System.out.println(indent + "o");
+		else {
+			System.out.println(indent + "o-->");
+			boolean isLeaf = top.getIsLeaf();
+			String childIndent = indent + "    ";
+			for (int i = 0; i < top.getCurrentlyStored(); i++) {
+				if (! isLeaf)  printSubtree(top.getChildNode(i), childIndent);
+				System.out.println(childIndent + top.getBTreeObject(i).getKey());
+			}
+			if (! isLeaf)  printSubtree(top.getChildNode(top.getCurrentlyStored()), childIndent);
+		}
+	}
 }
