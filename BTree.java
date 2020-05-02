@@ -229,14 +229,14 @@ public class BTree {
 		}
 	}
 
-	public void dumpTree() {
+	public void dumpTree(int k) {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(fileName);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		root.dumpTraverse(pw);
+		root.dumpTraverse(pw,k);
 		pw.close();
 	}
 }

@@ -130,7 +130,7 @@ public class GeneBankCreateBTree {
 //			tree.BTreeInsert(keytest);
 		
 		tree.printTree();
-		tree.dumpTree();
+		tree.dumpTree(sequenceLength*2);
 		
 	}
 	public static void printUsage() {

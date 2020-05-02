@@ -93,16 +93,72 @@ public class BTreeNode {
 			childPointer[i].traverse(); 
 
 	}
-	public void dumpTraverse(PrintWriter pw) {
+	
+	private String padZero(long key, int k) {
+
+		int keyLength = String.valueOf(key).length();
+		int difference = k - keyLength;
+		
+
+		if (difference == 0) {
+			return Long.toString(key);
+		}
+		else if (difference == 1) {
+			String merge = "0"+Long.toString(key);
+			return merge;
+		}
+		else {
+			String zero = "";
+			for (int i=0; i<difference; i++) {
+				zero = zero+"0";
+			}
+			String merge = zero+Long.toString(key);
+			return merge;
+		}
+	}
+	
+	
+//	private String keyToGene(String str, int k) {
+//		for(int i = 0; i < str.length()-sequenceLength+1;i = i+2) {
+//			String s = "";
+//			for(int j = 0; j < sequenceLength; j++) {
+//				if(str.charAt(i+j) == '00') {
+//					s += "A";
+//				}
+//				if(str.charAt(i+j) == 't' || str.charAt(i+j) == 'T') {
+//					s += "11";
+//				}
+//				if(str.charAt(i+j) == 'c' || str.charAt(i+j) == 'C') {
+//					s += "01";
+//				}
+//				if(str.charAt(i+j) == 'g' || str.charAt(i+j) == 'G') {
+//					s += "10";
+//				}
+//				if(str.charAt(i+j) == 'n' || str.charAt(i+j) == 'N') {
+//					s += "n";
+//				}
+//				
+//			}
+//		
+//		return null;
+//	}
+	
+	
+	
+	
+	public void dumpTraverse(PrintWriter pw, int k) {
 		int i =0;
 		for( i = 0; i < this.getCurrentlyStored(); i++) {
 			if(this.getIsLeaf() == false) {
-				childPointer[i].dumpTraverse(pw);
+				childPointer[i].dumpTraverse(pw, k);
 			}
-			pw.println((objectArray[i] +"  " + objectArray[i].getFrequency()) );
+			System.out.println((padZero(objectArray[i].getKey(), k) +": " + objectArray[i].getFrequency()) );
+			pw.println((padZero(objectArray[i].getKey(), k) +": " + objectArray[i].getFrequency()) );
+
+
 		}
 		if (this.getIsLeaf() == false) {
-			childPointer[i].dumpTraverse(pw); 
+			childPointer[i].dumpTraverse(pw, k); 
 		}
 	}
 	public String convertToString(long val) {
