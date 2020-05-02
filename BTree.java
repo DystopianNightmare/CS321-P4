@@ -12,22 +12,30 @@ public class BTree {
 	private File file;
 	private int t;
 	private int middle; 			// is the middle node
+	private String fileName;
+	private BTreeNode root2;
+	private int sequenceLength;
 
-	public BTree(String name, int t)  {
+	public BTree(String name, int t, int sequenceLength)  {
 		//make a new file to write to. M is number of values per node, call btreecreate to get a tree with 1 node
 		this.t = t;
 		m= t*2;
 		middle = (int)Math.floor(t);	//find middle node
-
+		fileName = name;
 		root = BTreeCreateNode();
+		this.sequenceLength = sequenceLength;
+	}
+
+	public int getSequenceLength() {
+		return sequenceLength;
 	}
 
 	public BTreeNode BTreeCreateNode()  {
-		node = new BTreeNode(m);
+		node = new BTreeNode(m,sequenceLength);
 
 		return node;
 	}
-	
+
 	/**
 	 * checks if a value is in the node, if so it will increment the frequency of that key
 	 * @param node
@@ -47,7 +55,7 @@ public class BTree {
 			}
 			i++;
 		}
-		
+
 		// check child nodes
 		if (equalsFound == false && node.getIsLeaf() == false) {
 			i = 0;
@@ -60,9 +68,9 @@ public class BTree {
 
 		return equalsFound;
 	}
-		
-		
-		
+
+
+
 	public boolean checkChildIsFull(BTreeNode node, long val) {
 		int i = 0;
 		while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
@@ -78,11 +86,11 @@ public class BTree {
 		else if (childNode.getCurrentlyStored() == m-1 && !childNode.getIsLeaf()) {
 			boolean temp = checkChildIsFull(childNode, val);
 			return temp;
-			}
+		}
 		return false;
 	}
 
-	
+
 	public void BTreeInsert(long val)  {																					// INSERT
 
 		node = root;
@@ -90,13 +98,13 @@ public class BTree {
 			return;
 		}
 		if(node.getCurrentlyStored() == m-1 && checkChildIsFull(node, val)) {
-			BTreeNode s = new BTreeNode(m);
+			BTreeNode s = new BTreeNode(m, sequenceLength);
 			root = s;
 			s.setIsLeaf(false);
 			s.setCurrentlyStored(0);
 			s.setChildPointer(node, 0);
 			s.setIsRoot(true);
-			
+
 			insertNodeNonFull(node,val);
 			BTreeSplitChild(s,val);
 		}else {
@@ -106,7 +114,7 @@ public class BTree {
 	public void BTreeSplitChild(BTreeNode parent, long zz) {																		// SPLIT CHILD
 
 		//set Z equal to a new null node, Y is equal to the appropriate child node
-		BTreeNode z = new BTreeNode(m);		//z = new right child
+		BTreeNode z = new BTreeNode(m, sequenceLength);		//z = new right child
 		node=parent;
 		int i = parent.getCurrentlyStored();
 		i = 0;
@@ -119,24 +127,24 @@ public class BTree {
 		// set parent pointers
 		y.setParentPointer(parent);
 		z.setParentPointer(parent);
-		
+
 		// promote middle-1 key to parent 
 		i = parent.getCurrentlyStored();
 		while(i >= 1 && zz < parent.getBTreeObject(i-1).getKey()) {
 			parent.setBTreeObject(parent.getBTreeObject(i-1), i);
 			i--;
 		}
-		
+
 		parent.setBTreeObject(y.getBTreeObject(middle-1), i);
 		parent.incrementCurrentlyStored();
-		
+
 		// take top half objects from array y and put in array z
 		int tmp = y.getCurrentlyStored()/2;
 		for(int j =0; j<tmp; j++) {
 			z.setBTreeObject(y.getBTreeObject(j+tmp), j); //z.key = y.key+t
 		}
-		
-		
+
+
 		//set child pointer to new child
 		i = parent.getCurrentlyStored();
 		while(i >= 1 && z.getBTreeObject(0).getKey() < parent.getBTreeObject(i-1).getKey()) {
@@ -168,19 +176,19 @@ public class BTree {
 				node.setBTreeObject(node.getBTreeObject(i-1), i);
 				i--;
 			}
-			
+
 			BTreeObject obj = new BTreeObject(val);
 			node.setBTreeObject(obj, i);
 			node.incrementCurrentlyStored();	
 		}
-		
+
 		// if node is not a leaf, then we go down to the correct child
 		else{
 			i = 0;
 			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
 				i++;
 			}
-			
+
 			BTreeNode childNode = node.getChildNode(i);	
 			// if child is full and all of its children are full
 			if(childNode.getCurrentlyStored() ==  m-1 && checkChildIsFull(childNode, val)) {
@@ -190,46 +198,15 @@ public class BTree {
 			else {
 				insertNodeNonFull(childNode, val);
 			}
-			
+
 		}
 	}
 
-	
-	
-	public void dumpFile(BTree bTree) {
-		String dumpFile = "dump";
-		try {
-			PrintWriter outputStream = new PrintWriter(dumpFile);
-			for (int i =0; i <linearTable.getCapacity(); i++) {
-				if (doubleTable.getArray()[i] != null) {
-					outputStream.println(doubleTable.toSting(i));
-				}
-		}
-		outputStream.close();
-	} catch (FileNotFoundException e) {
-		e.printStackTrace();
-	} 
-
-
-
-	public void printing(BTreeNode top) {
-		boolean isLeaf = top.getIsLeaf();
-		for (int i = 0; i < top.getCurrentlyStored(); i++) {
-			if (! isLeaf)  printing(top.getChildNode(i));
-			System.out.println(childIndent + top.getBTreeObject(i).getKey());
-		}
-		if (! isLeaf)  printing(top.getChildNode(top.getCurrentlyStored()));
-
-	}	
-	
 	public void printTree() {
 		System.out.println(" ");	//blank space
 		root.traverse();
 		print();
 	}
-	
-	
-	
 	public void print () {
 		// Print a textual representation of this B-tree.
 		printSubtree(root, "");
@@ -250,5 +227,16 @@ public class BTree {
 			}
 			if (! isLeaf)  printSubtree(top.getChildNode(top.getCurrentlyStored()), childIndent);
 		}
+	}
+
+	public void dumpTree(int sequenceLength) {
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(fileName+".txt");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		root.dumpTraverse(pw, sequenceLength);
+		pw.close();
 	}
 }
