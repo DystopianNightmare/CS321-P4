@@ -26,6 +26,41 @@ public class BTree {
 		return node;
 	}
 	
+	/**
+	 * checks if a value is in the node, if so it will increment the frequency of that key
+	 * @param node
+	 * @param val
+	 * @return
+	 */
+	public boolean checkEqual(BTreeNode node, long val) {
+		boolean equalsFound = false;
+
+		// check current node
+		int i = 0;
+		while(i < node.getCurrentlyStored()) {
+			if (node.getBTreeObject(i).getKey() == val) {
+				node.getBTreeObject(i).incrementFrequency();
+				equalsFound = true;
+				break;
+			}
+			i++;
+		}
+		
+		// check child nodes
+		if (equalsFound == false && node.getIsLeaf() == false) {
+			i = 0;
+			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+				i++;
+			}
+			BTreeNode childNode = node.getChildNode(i);	
+			equalsFound = checkEqual(childNode, val);
+		}
+
+		return equalsFound;
+	}
+		
+		
+		
 	public boolean checkChildIsFull(BTreeNode node, long val) {
 		int i = 0;
 		while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
@@ -35,11 +70,12 @@ public class BTree {
 			return true;
 		}
 		BTreeNode childNode = node.getChildNode(i);
-		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf()) {
+		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf() ) {
 			return true;
 		}
 		else if (childNode.getCurrentlyStored() == m-1 && !childNode.getIsLeaf()) {
-			checkChildIsFull(node, val);
+			boolean temp = checkChildIsFull(childNode, val);
+			return temp;
 			}
 		return false;
 	}
@@ -48,47 +84,68 @@ public class BTree {
 	public void BTreeInsert(long val)  {																					// INSERT
 
 		node = root;
+		if (checkEqual(node, val) == true) {
+			return;
+		}
 		if(node.getCurrentlyStored() == m-1 && checkChildIsFull(node, val)) {
 			BTreeNode s = new BTreeNode(m);
 			root = s;
 			s.setIsLeaf(false);
 			s.setCurrentlyStored(0);
 			s.setChildPointer(node, 0);
-
 			s.setIsRoot(true);
-
-
+			
 			insertNodeNonFull(node,val);
 			BTreeSplitChild(s,val);
-
-			//			insertNodeNonFull(s,val);
 		}else {
 			insertNodeNonFull(root, val);	
 		}
 	}
 	public void BTreeSplitChild(BTreeNode parent, long zz) {																		// SPLIT CHILD
 
-		//*** changed for loops to start at zero since arrays being used start at 0
-
+		//set Z equal to a new null node, Y is equal to the appropriate child node
 		BTreeNode z = new BTreeNode(m);		//z = new right child
-		BTreeNode y = parent.getChildNode(parent.getCurrentlyStored());	//y = old root
+		node=parent;
+		int i = parent.getCurrentlyStored();
+		i = 0;
+		while(i < parent.getCurrentlyStored() && zz > parent.getBTreeObject(i).getKey()) {
+			i++;
+		}
+		BTreeNode y = parent.getChildNode(i);
 		z.setIsLeaf(y.getIsLeaf());
 
+		// set parent pointers
 		y.setParentPointer(parent);
 		z.setParentPointer(parent);
-
-		parent.setBTreeObject(y.getBTreeObject(middle-1), parent.getCurrentlyStored());
+		
+		// promote middle-1 key to parent 
+		i = parent.getCurrentlyStored();
+		while(i >= 1 && zz < parent.getBTreeObject(i-1).getKey()) {
+			parent.setBTreeObject(parent.getBTreeObject(i-1), i);
+			i--;
+		}
+		
+		parent.setBTreeObject(y.getBTreeObject(middle-1), i);
 		parent.incrementCurrentlyStored();
 		
-		parent.setChildPointer(z, parent.getCurrentlyStored());
-
-
-		//in psuedocode we set z's n to t-l, but i ddont know if we need to if we call that value from Tree and set globally
 		// take top half objects from array y and put in array z
-		for(int j =0; j<middle; j++) {
-			z.setBTreeObject(y.getBTreeObject(j+middle), j); //z.key = y.key+t
+		int tmp = y.getCurrentlyStored()/2;
+		for(int j =0; j<tmp; j++) {
+			z.setBTreeObject(y.getBTreeObject(j+tmp), j); //z.key = y.key+t
 		}
+		
+		
+		//set child pointer to new child
+		i = parent.getCurrentlyStored();
+		while(i >= 1 && z.getBTreeObject(0).getKey() < parent.getBTreeObject(i-1).getKey()) {
+			parent.setChildPointer(parent.getChildNode(i-1), i);
+			i--;
+		}
+		parent.setChildPointer(z, i);
 
+
+
+		// if y is not a leaf we need to assign the correct child pointers for child
 		if(!y.getIsLeaf()) {	//if y is not a leaf
 			for(int j = 0; j < middle+1;j++) {
 				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
@@ -96,24 +153,16 @@ public class BTree {
 		}
 
 		y.setCurrentlyStored(middle-1);
-		z.setCurrentlyStored(middle);			// -1 ????
-
-//		for(int j = parent.getCurrentlyStored(); j > middle+1; j--) {		//what is i?
-//			parent.setChildPointer(parent.getChildNode(j), j-1);
-//		}
-
-		parent.setChildPointer(z, parent.getCurrentlyStored());
-
-
+		z.setCurrentlyStored(middle);	
 	}
 
 	public void insertNodeNonFull(BTreeNode node, long val) {	
 		int i = node.getCurrentlyStored();
 
-		// if node is a leaf
+		// if node is a leaf insert key to correct index
 		if(node.getIsLeaf()) {
 
-			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {				//this line and next i had to change i to i-1 -- probaly going to have to for remainder as well
+			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {
 				node.setBTreeObject(node.getBTreeObject(i-1), i);
 				i--;
 			}
@@ -123,34 +172,18 @@ public class BTree {
 			node.incrementCurrentlyStored();	
 		}
 		
-		// if node is not a leaf
+		// if node is not a leaf, then we go down to the correct child
 		else{
-			 i = 0;
+			i = 0;
 			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
 				i++;
 			}
 			
-			BTreeNode childNode = node.getChildNode(i);								/// 	THIS FUCKING BREAKS IT!!!!!!!!!!!!!!!!!!11
-
-			if(childNode.getCurrentlyStored() ==  m-1) {
-				
-				
+			BTreeNode childNode = node.getChildNode(i);	
+			// if child is full and all of its children are full
+			if(childNode.getCurrentlyStored() ==  m-1 && checkChildIsFull(childNode, val)) {
 				insertNodeNonFull(childNode,val);
 				BTreeSplitChild(node,val);
-				
-				
-				
-//				BTreeNode parentNode = childNode.getParentPointer();
-//				parentNode.setIsLeaf(false);
-//			
-//				parentNode.setChildPointer(childNode, parentNode.getCurrentlyStored());
-//				parentNode.setBTreeObject(childNode.getBTreeObject(middle), parentNode.getCurrentlyStored());
-//				childNode.setParentPointer(parentNode);
-//
-//				BTreeSplitChild(parentNode, val);
-//				i = parentNode.getCurrentlyStored();
-//				
-//				childNode = parentNode;
 			}
 			else {
 				insertNodeNonFull(childNode, val);
