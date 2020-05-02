@@ -21,7 +21,8 @@ public class BTreeObject implements Serializable {
 		return key;
 	}
 	
+
 	public String toString() {
-		return String.valueOf(key) + ": " + frequency;
+		return key + ": " + frequency;
 	}
 }
