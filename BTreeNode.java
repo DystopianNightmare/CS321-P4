@@ -118,30 +118,27 @@ public class BTreeNode {
 	}
 	
 	
-//	private String keyToGene(String str, int k) {
-//		for(int i = 0; i < str.length()-sequenceLength+1;i = i+2) {
-//			String s = "";
-//			for(int j = 0; j < sequenceLength; j++) {
-//				if(str.charAt(i+j) == '00') {
-//					s += "A";
-//				}
-//				if(str.charAt(i+j) == 't' || str.charAt(i+j) == 'T') {
-//					s += "11";
-//				}
-//				if(str.charAt(i+j) == 'c' || str.charAt(i+j) == 'C') {
-//					s += "01";
-//				}
-//				if(str.charAt(i+j) == 'g' || str.charAt(i+j) == 'G') {
-//					s += "10";
-//				}
-//				if(str.charAt(i+j) == 'n' || str.charAt(i+j) == 'N') {
-//					s += "n";
-//				}
-//				
-//			}
-//		
-//		return null;
-//	}
+	private static String keyToGene(String str) {
+		String returnStr = "";
+		for(int i = 0; i < str.length();i = i+2) {
+			String subStr = str.substring(i, i+2);
+
+			if(subStr.charAt(0) == '0' && subStr.charAt(1) == '0') {
+				returnStr += "A";
+			}
+			if(subStr.charAt(0) == '1' && subStr.charAt(1) == '1') {
+				returnStr += "T";
+			}
+			if(subStr.charAt(0) == '0' && subStr.charAt(1) == '1') {
+				returnStr += "C";
+			}
+			if(subStr.charAt(0) == '1' && subStr.charAt(1) == '0') {
+				returnStr += "G";
+			}
+
+		}
+		return returnStr;
+	}
 	
 	
 	
@@ -152,8 +149,8 @@ public class BTreeNode {
 			if(this.getIsLeaf() == false) {
 				childPointer[i].dumpTraverse(pw, k);
 			}
-			System.out.println((padZero(objectArray[i].getKey(), k) +": " + objectArray[i].getFrequency()) );
-			pw.println((padZero(objectArray[i].getKey(), k) +": " + objectArray[i].getFrequency()) );
+			System.out.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
+			pw.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
 
 
 		}
@@ -166,10 +163,4 @@ public class BTreeNode {
 		
 		return null;
 	}
-	
-	
-	
-	
-	
-	
 }
