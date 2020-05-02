@@ -73,6 +73,16 @@ public class BTreeNode {
 	public void setChildPointer(BTreeNode node, int i) {
 		childPointer[i] = node;
 	}
+
+	public String toString() {
+		for(int i = 0; i <objectArray.length; i++) {
+			return objectArray[i].toString();
+		}
+		return null;
+		
+	}
+
+	
 	public void traverse() {
 		int i = 0;
 		
