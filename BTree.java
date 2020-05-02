@@ -26,6 +26,41 @@ public class BTree {
 		return node;
 	}
 	
+	/**
+	 * checks if a value is in the node, if so it will increment the frequency of that key
+	 * @param node
+	 * @param val
+	 * @return
+	 */
+	public boolean checkEqual(BTreeNode node, long val) {
+		boolean equalsFound = false;
+
+		if(node.getIsLeaf()) {
+			int i =0;
+
+			while(i < node.getCurrentlyStored()) {
+				if (node.getBTreeObject(i).getKey() == val) {
+					node.getBTreeObject(i).incrementFrequency();
+					equalsFound = true;
+					break;
+				}
+				i++;
+			}
+		}
+
+		else if (node.getIsLeaf() == false){
+			int i = 0;
+			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+				i++;
+			}
+			BTreeNode childNode = node.getChildNode(i);	
+			equalsFound = checkEqual(childNode, val);
+		}
+			return equalsFound;
+	}
+		
+		
+		
 	public boolean checkChildIsFull(BTreeNode node, long val) {
 		int i = 0;
 		while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
@@ -49,6 +84,9 @@ public class BTree {
 	public void BTreeInsert(long val)  {																					// INSERT
 
 		node = root;
+		if (checkEqual(node, val) == true) {
+			return;
+		}
 		if(node.getCurrentlyStored() == m-1 && checkChildIsFull(node, val)) {
 			BTreeNode s = new BTreeNode(m);
 			root = s;
@@ -119,6 +157,7 @@ public class BTree {
 
 		// if node is a leaf insert key to correct index
 		if(node.getIsLeaf()) {
+
 			while(i >= 1 && val < node.getBTreeObject(i-1).getKey()) {
 				node.setBTreeObject(node.getBTreeObject(i-1), i);
 				i--;
