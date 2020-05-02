@@ -55,7 +55,7 @@ public class GeneBankCreateBTree {
 		
 		//Get name of Binary file and make a new BTree
 		
-		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + t );	//This is the name of the binary file
+		nameOfTree = (fileName + ".btree.data." + sequenceLength  );	//This is the name of the binary file
 		BTree tree = new BTree(nameOfTree,t,sequenceLength);
 		
 		try {
