@@ -1,5 +1,6 @@
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -121,15 +122,72 @@ public class GeneBankCreateBTree {
 		Long key = (long) 33;
 		
 //	the folllowing is to add XX number of values to tree and then print the tree
-		for(int i =0; i< 18; i++) {
-			long keytest = (long) i;
-			System.out.println(keytest);
-			if(keytest == 12) {
-//				tree.printTree();
-				System.out.println("testing");
-			}
-			tree.BTreeInsert(keytest);
-		}
+
+//		for(int i =0; i< 13; i++) {
+//			
+//			long max =25;
+//			long min = 1;
+//			long out = (int) ((Math.random()*((max-min)+1))+min);
+//			System.out.println(out);
+//			
+//			if(i == 12) {
+////				tree.printTree();
+//				System.out.println("testing");
+//			}
+//			tree.BTreeInsert(out);
+//		}
+
+		System.out.println(10);
+		tree.BTreeInsert(10);
+		System.out.println(10);
+		tree.BTreeInsert(10);
+		System.out.println(11);
+		tree.BTreeInsert(11);
+		System.out.println(11);
+		tree.BTreeInsert(11);
+		System.out.println(12);
+		tree.BTreeInsert(12);
+		System.out.println(12);
+		tree.BTreeInsert(12);
+		System.out.println(13);
+		tree.BTreeInsert(13);
+		System.out.println(13);
+		tree.BTreeInsert(13);
+		System.out.println(14);
+		tree.BTreeInsert(14);
+		System.out.println(11);
+		tree.BTreeInsert(11);
+		System.out.println(10);
+		tree.BTreeInsert(10);
+		System.out.println(12);
+		tree.BTreeInsert(12);
+		System.out.println(13);
+		tree.BTreeInsert(13);
+		System.out.println(6);
+		tree.BTreeInsert(6);
+		System.out.println(7);
+		tree.BTreeInsert(7);
+		System.out.println(7);
+		tree.BTreeInsert(7);
+		System.out.println(8);
+		tree.BTreeInsert(8);
+		System.out.println(9);
+		tree.BTreeInsert(9);
+		System.out.println(19);
+		tree.BTreeInsert(19);
+		System.out.println(13);
+		tree.BTreeInsert(13);
+		System.out.println(18);
+		tree.BTreeInsert(18);
+		System.out.println(18);
+		tree.BTreeInsert(18);
+		System.out.println(11);
+		tree.BTreeInsert(11);
+		System.out.println(17);
+		tree.BTreeInsert(17);
+		System.out.println(19);
+		tree.BTreeInsert(19);
+
 		tree.printTree();
 			
 		
