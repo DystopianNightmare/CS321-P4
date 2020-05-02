@@ -56,7 +56,7 @@ public class GeneBankCreateBTree {
 		//Get name of Binary file and make a new BTree
 		
 		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + t );	//This is the name of the binary file
-		BTree tree = new BTree(nameOfTree,t);
+		BTree tree = new BTree(nameOfTree,t,sequenceLength);
 		
 		try {
 			Scanner scan = new Scanner(new FileReader(fileName));
@@ -130,7 +130,7 @@ public class GeneBankCreateBTree {
 //			tree.BTreeInsert(keytest);
 		
 		tree.printTree();
-			
+		tree.dumpTree();
 		
 	}
 	public static void printUsage() {
