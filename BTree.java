@@ -35,28 +35,28 @@ public class BTree {
 	public boolean checkEqual(BTreeNode node, long val) {
 		boolean equalsFound = false;
 
-		if(node.getIsLeaf()) {
-			int i =0;
-
-			while(i < node.getCurrentlyStored()) {
-				if (node.getBTreeObject(i).getKey() == val) {
-					node.getBTreeObject(i).incrementFrequency();
-					equalsFound = true;
-					break;
-				}
-				i++;
+		// check current node
+		int i = 0;
+		while(i < node.getCurrentlyStored()) {
+			if (node.getBTreeObject(i).getKey() == val) {
+				node.getBTreeObject(i).incrementFrequency();
+				equalsFound = true;
+				break;
 			}
+			i++;
 		}
-
-		else if (node.getIsLeaf() == false){
-			int i = 0;
+		
+		// check child nodes
+		if (equalsFound == false && node.getIsLeaf() == false) {
+			i = 0;
 			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
 				i++;
 			}
 			BTreeNode childNode = node.getChildNode(i);	
 			equalsFound = checkEqual(childNode, val);
 		}
-			return equalsFound;
+
+		return equalsFound;
 	}
 		
 		
