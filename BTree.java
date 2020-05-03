@@ -28,7 +28,7 @@ public class BTree {
 		m= t*2;
 		middle = (int)Math.floor(t);	//find middle node
 		fileName = name;
-		
+
 		this.sequenceLength = sequenceLength;
 		RAF = new RandomAccessFile(fileName, "rw");
 		BTreeCreateNode();
@@ -50,15 +50,15 @@ public class BTree {
 		RAF.writeInt(node.getCurrentlyStored());
 		RAF.writeInt(node.getParentPointer());
 		RAF.writeBoolean(node.getIsLeaf());
-		
+
 		for(int i = 0; i < node.getM(); i++) {
-		RAF.writeInt(node.getChildNode(i));
+			RAF.writeInt(node.getChildNode(i));
 		}
 		for(int i = 0; i < node.getCurrentlyStored()-1; i++) {
 			RAF.writeLong(node.getKey(i));
 			RAF.writeInt(node.getFreq(location));
-			}
-//		RAF.close();
+		}
+		//		RAF.close();
 		writeFileMetaData();
 	}
 	public BTreeNode readNodeFromDisk(int i) throws IOException {
@@ -71,13 +71,13 @@ public class BTree {
 		node.setIsLeaf(RAF.readBoolean());
 		for(int j = 0; j < node.getM(); j++) {
 			node.setChildPointer(RAF.readInt(), j);
-			
-			}
-		for(int j = 0; j < node.getM()-1; j++) {
+
+		}
+		for(int j = 0; j < node.getCurrentlyStored()-1; j++) {
 			node.setKey( RAF.readLong(), j);
 			node.setFreq(RAF.readInt(), j);
-			}
-		
+		}
+
 		return node;
 	}
 	public void writeFileMetaData() throws IOException {
@@ -87,139 +87,153 @@ public class BTree {
 		RAF.writeInt(t);
 		RAF.writeInt(sequenceLength);
 		RAF.writeInt(rootLocation);
-//		RAF.close();
+		//		RAF.close();
 	}
 
-//	/**
-//	 * checks if a value is in the node, if so it will increment the frequency of that key
-//	 * @param node
-//	 * @param val
-//	 * @return
-//	 */
-//	public boolean checkEqual(BTreeNode node, long val) {
-//		boolean equalsFound = false;
-//
-//		// check current node
-//		int i = 0;
-//		while(i < node.getCurrentlyStored()) {
-//			if (node.getBTreeObject(i).getKey() == val) {
-//				node.getBTreeObject(i).incrementFrequency();
-//				equalsFound = true;
-//				break;
-//			}
-//			i++;
-//		}
-//
-//		// check child nodes
-//		if (equalsFound == false && node.getIsLeaf() == false) {
-//			i = 0;
-//			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
-//				i++;
-//			}
-//			BTreeNode childNode = node.getChildNode(i);	
-//			equalsFound = checkEqual(childNode, val);
-//		}
-//
-//		return equalsFound;
-//	}
-//
-//
-//
-//	public boolean checkChildIsFull(BTreeNode node, long val) {
-//		int i = 0;
-//		while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
-//			i++;
-//		}
-//		if (node.getIsLeaf()== true) {
-//			return true;
-//		}
-//		BTreeNode childNode = node.getChildNode(i);
-//		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf() ) {
-//			return true;
-//		}
-//		else if (childNode.getCurrentlyStored() == m-1 && !childNode.getIsLeaf()) {
-//			boolean temp = checkChildIsFull(childNode, val);
-//			return temp;
-//		}
-//		return false;
-//	}
-//
-//
-	public void BTreeInsert(long val)  {																					// INSERT
+	//	/**
+	//	 * checks if a value is in the node, if so it will increment the frequency of that key
+	//	 * @param node
+	//	 * @param val
+	//	 * @return
+	//	 */
+	//	public boolean checkEqual(BTreeNode node, long val) {
+	//		boolean equalsFound = false;
+	//
+	//		// check current node
+	//		int i = 0;
+	//		while(i < node.getCurrentlyStored()) {
+	//			if (node.getBTreeObject(i).getKey() == val) {
+	//				node.getBTreeObject(i).incrementFrequency();
+	//				equalsFound = true;
+	//				break;
+	//			}
+	//			i++;
+	//		}
+	//
+	//		// check child nodes
+	//		if (equalsFound == false && node.getIsLeaf() == false) {
+	//			i = 0;
+	//			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+	//				i++;
+	//			}
+	//			BTreeNode childNode = node.getChildNode(i);	
+	//			equalsFound = checkEqual(childNode, val);
+	//		}
+	//
+	//		return equalsFound;
+	//	}
+	//
+	//
+	//
+	//	public boolean checkChildIsFull(BTreeNode node, long val) {
+	//		int i = 0;
+	//		while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+	//			i++;
+	//		}
+	//		if (node.getIsLeaf()== true) {
+	//			return true;
+	//		}
+	//		BTreeNode childNode = node.getChildNode(i);
+	//		if (childNode.getCurrentlyStored() == m-1 && childNode.getIsLeaf() ) {
+	//			return true;
+	//		}
+	//		else if (childNode.getCurrentlyStored() == m-1 && !childNode.getIsLeaf()) {
+	//			boolean temp = checkChildIsFull(childNode, val);
+	//			return temp;
+	//		}
+	//		return false;
+	//	}
+	//
+	//
+	public void BTreeInsert(long val) throws IOException  {																					// INSERT
 
-		
-//		if (checkEqual(node, val) == true) {
-//			return;
-//		}
-//		if(node.getCurrentlyStored() == m-1 && checkChildIsFull(node, val)) {
-//			BTreeNode s = new BTreeNode(m, sequenceLength);
-//			root = s;
-//			s.setIsLeaf(false);
-//			s.setCurrentlyStored(0);
-//			s.setChildPointer(node, 0);
-//			s.setIsRoot(true);
-//
-//			insertNodeNonFull(node,val);
-//			BTreeSplitChild(s,val);
-//		}else {
+		BTreeNode node = root;
+		//		if (checkEqual(node, val) == true) {
+		//			return;
+		//		}
+		if(node.getCurrentlyStored() == m-1) { // && checkChildIsFull(node, val)) {
+//			BTreeNode newNode = new BTreeNode(m, sequenceLength, ++nodeNumber);
+			BTreeNode newNode = root;
+			
+			root.setParentPointer(root.getLocation());
+//			newNode.setChildPointer(root.getLocation(), 0);
+			root = newNode;
+			rootLocation = root.getLocation();
+			
+			newNode.setIsLeaf(false);
+			newNode.setCurrentlyStored(0);
+			newNode.setLocation(root.getLocation());
+			newNode.setIsRoot(true);
+
+			insertNodeNonFull(node,val);
+			BTreeSplitChild(newNode,root,val);
+			writeFileMetaData();
+		}else {
 			insertNodeNonFull(root, val);	
-//		}
+		}
 	}
-//	public void BTreeSplitChild(BTreeNode parent, long zz) {																		// SPLIT CHILD
-//
-//		//set Z equal to a new null node, Y is equal to the appropriate child node
-//		BTreeNode z = new BTreeNode(m, sequenceLength);		//z = new right child
-//		node=parent;
-//		int i = parent.getCurrentlyStored();
-//		i = 0;
-//		while(i < parent.getCurrentlyStored() && zz > parent.getBTreeObject(i).getKey()) {
-//			i++;
-//		}
-//		BTreeNode y = parent.getChildNode(i);
-//		z.setIsLeaf(y.getIsLeaf());
-//
-//		// set parent pointers
-//		y.setParentPointer(parent);
-//		z.setParentPointer(parent);
-//
-//		// promote middle-1 key to parent 
-//		i = parent.getCurrentlyStored();
-//		while(i >= 1 && zz < parent.getBTreeObject(i-1).getKey()) {
-//			parent.setBTreeObject(parent.getBTreeObject(i-1), i);
-//			i--;
-//		}
-//
-//		parent.setBTreeObject(y.getBTreeObject(middle-1), i);
-//		parent.incrementCurrentlyStored();
-//
-//		// take top half objects from array y and put in array z
-//		int tmp = y.getCurrentlyStored()/2;
-//		for(int j =0; j<tmp; j++) {
-//			z.setBTreeObject(y.getBTreeObject(j+tmp), j); //z.key = y.key+t
-//		}
-//
-//
-//		//set child pointer to new child
-//		i = parent.getCurrentlyStored();
-//		while(i >= 1 && z.getBTreeObject(0).getKey() < parent.getBTreeObject(i-1).getKey()) {
-//			parent.setChildPointer(parent.getChildNode(i-1), i);
-//			i--;
-//		}
-//		parent.setChildPointer(z, i);
-//
-//
-//
-//		// if y is not a leaf we need to assign the correct child pointers for child
-//		if(!y.getIsLeaf()) {	//if y is not a leaf
-//			for(int j = 0; j < middle+1;j++) {
-//				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
-//			}
-//		}
-//
-//		y.setCurrentlyStored(middle-1);
-//		z.setCurrentlyStored(middle);	
-//	}
-//
+	public void BTreeSplitChild(BTreeNode parent,BTreeNode left, long zz) throws IOException {																		// SPLIT CHILD
+
+		//set Z equal to a new null node, Y is equal to the appropriate child node
+		BTreeNode z = new BTreeNode(m, sequenceLength,++nodeNumber);		//z = new right child
+
+		int i = parent.getCurrentlyStored();
+		i = 0;
+		while(i < parent.getCurrentlyStored() && zz > parent.getKey(i)) {
+			i++;
+		}
+		BTreeNode y = left;
+		z.setIsLeaf(y.getIsLeaf());
+
+		// set parent pointers
+		y.setParentPointer(parent.getLocation());
+		z.setParentPointer(parent.getLocation());
+
+		// promote middle-1 key to parent 
+		i = parent.getCurrentlyStored();
+		while(i >= 1 && zz < parent.getKey(i-1)) {
+			parent.setKey(parent.getKey(i-1),i);
+			i--;
+		}
+
+		parent.setKey(y.getKey(middle-1), i);
+		parent.incrementCurrentlyStored();
+
+		// take top half objects from array y and put in array z
+		int tmp = y.getCurrentlyStored()/2;
+		for(int j =0; j<tmp; j++) {
+			z.setKey(y.getKey(j+tmp),j); //z.key = y.key+t
+		}
+
+
+		//set child pointer to new child
+		i = parent.getCurrentlyStored();
+		while(i >= 1 && z.getKey(i) < parent.getKey(i-1)) {
+			parent.setChildPointer(parent.getChildNode(i-1), i);
+			i--;
+		}
+		parent.setChildPointer(z.getLocation(), i);
+		
+		System.out.println(y.getLocation());
+		
+		writeNodeToDisk(parent,parent.getLocation());
+		writeNodeToDisk(y,y.getLocation());
+		writeNodeToDisk(z,z.getLocation());
+		
+
+
+
+		// if y is not a leaf we need to assign the correct child pointers for child
+		if(!y.getIsLeaf()) {	//if y is not a leaf
+			for(int j = 0; j < middle+1;j++) {
+				z.setChildPointer(y.getChildNode(j+middle), j); 		//sets z's child pointers to that of y+t
+			}
+		}
+
+		y.setCurrentlyStored(middle-1);
+		z.setCurrentlyStored(middle);	
+	}
+
 	public void insertNodeNonFull(BTreeNode node, long val) {	
 		int i = node.getCurrentlyStored();
 
@@ -236,75 +250,87 @@ public class BTree {
 			node.incrementCurrentlyStored();	
 		}
 
-//		// if node is not a leaf, then we go down to the correct child
-//		else{
-//			i = 0;
-//			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
-//				i++;
-//			}
-//
-//			BTreeNode childNode = node.getChildNode(i);	
-//			// if child is full and all of its children are full
-//			if(childNode.getCurrentlyStored() ==  m-1 && checkChildIsFull(childNode, val)) {
-//				insertNodeNonFull(childNode,val);
-//				BTreeSplitChild(node,val);
-//			}
-//			else {
-//				insertNodeNonFull(childNode, val);
-//			}
-//
-//		}
+		//		// if node is not a leaf, then we go down to the correct child
+		//		else{
+		//			i = 0;
+		//			while(i < node.getCurrentlyStored() && val > node.getBTreeObject(i).getKey()) {
+		//				i++;
+		//			}
+		//
+		//			BTreeNode childNode = node.getChildNode(i);	
+		//			// if child is full and all of its children are full
+		//			if(childNode.getCurrentlyStored() ==  m-1 && checkChildIsFull(childNode, val)) {
+		//				insertNodeNonFull(childNode,val);
+		//				BTreeSplitChild(node,val);
+		//			}
+		//			else {
+		//				insertNodeNonFull(childNode, val);
+		//			}
+		//
+		//		}
 	}
-//
-//	public void printTree() {
-//		System.out.println(" ");	//blank space
-//		root.traverse();
-//		print();
-//	}
-//	public void print () {
-//		// Print a textual representation of this B-tree.
-//		printSubtree(root, "");
-//	}
+	//
+	public void printTree() throws IOException {
+		System.out.println(" ");	//blank space
+		traverse(root);
 
-//	private static void printSubtree (BTreeNode top, String indent) {
-//		// Print a textual representation of the subtree of this B-tree whose
-//		// topmost node is top, indented by the string of spaces indent.
-//		if (top == null)
-//			System.out.println(indent + "o");
-//		else {
-//			System.out.println(indent + "o-->");
-//			boolean isLeaf = top.getIsLeaf();
-//			String childIndent = indent + "    ";
-//			for (int i = 0; i < top.getCurrentlyStored(); i++) {
-//				if (! isLeaf)  printSubtree(top.getChildNode(i), childIndent);
-//				System.out.println(childIndent + top.getBTreeObject(i).getKey());
-//			}
-//			if (! isLeaf)  printSubtree(top.getChildNode(top.getCurrentlyStored()), childIndent);
-//		}
-//	}
+	}
+	public void traverse(BTreeNode node) throws IOException {
+		int i = 0;
+	
+//		BTreeNode node1 = new BTreeNode(0,0,0);
+		for( i = 0; i < node.getCurrentlyStored(); i++) {
+			if(node.getIsLeaf() == false) {
+				System.out.println();
+				 node=readNodeFromDisk(node.getChildNode(i));
+				traverse(node);
+			}
+			System.out.println(node.getKey(i) + " leaf = "+ node.getIsLeaf()+ "              curr stored in node = "+node.getCurrentlyStored());
 
-	public void dumpTree(int k) {
-		PrintWriter pw = null;
-		try {
-			pw = new PrintWriter("dump");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		}
-		root.dumpTraverse(pw,k);
-		pw.close();
+	
+	
+	
+//		System.out.println(" ");
+//		if (this.getIsLeaf() == false) {
+//			childPointer(i).traverse(); 
+	System.out.println(" ");
+	if (node.getIsLeaf() == false) {
+		node=readNodeFromDisk(node.getChildNode(i));
+		traverse(node);
 	}
-	
-	
+	}
+
 
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	//	public void print () {
+	//		// Print a textual representation of this B-tree.
+	//		printSubtree(root, "");
+	//	}
+
+
+	//	public void dumpTree(int k) {
+	//		PrintWriter pw = null;
+	//		try {
+	//			pw = new PrintWriter("dump");
+	//		} catch (FileNotFoundException e) {
+	//			e.printStackTrace();
+	//		}
+	//		root.dumpTraverse(pw,k);
+	//		pw.close();
+	//	}
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

@@ -34,7 +34,7 @@ public class BTreeNode {
 		isLeaf = true;
 		this.m = m;
 		objectArray = new BTreeObject[m];
-		childPointer = new int[m+1];
+		childPointer = new int[m];
 		currentlyStored = 0;
 		parentPointer = 0;
 		this.sequenceLength = sequenceLength;
@@ -101,23 +101,24 @@ public class BTreeNode {
 	public void setChildPointer(int node, int i) {
 		childPointer[i] = node;
 	}
-	public void traverse() {
-		int i = 0;
-
-		for( i = 0; i < this.getCurrentlyStored(); i++) {
-			if(this.getIsLeaf() == false) {
-//				childPointer[i].traverse();
-
-			}
-			System.out.println(objectArray[i] +" leaf = "+ this.getIsLeaf()+ "              curr stored in node = "+this.getCurrentlyStored()+ " count : " + objectArray[i].getFrequency());
-
-		}
-
-		System.out.println(" ");
+//	public void traverse() {
+//		int i = 0;
+//		BTreeNode node = new BTreeNode(0,0,0);
+//		for( i = 0; i < this.getCurrentlyStored(); i++) {
+//			if(this.getIsLeaf() == false) {
+//				node=this.getChildNode(i)
+//
+//			}
+//			System.out.println(objectArray[i] +" leaf = "+ this.getIsLeaf()+ " curr stored in node = "+this.getCurrentlyStored()+ " count : " + objectArray[i].getFrequency());
+//
+//		}
+//
+//		System.out.println(" ");
 //		if (this.getIsLeaf() == false) {
-//			childPointer[i].traverse(); 
-
-	}
+//			childPointer(i).traverse(); 
+//		}
+//
+//	}
 	
 	private String padZero(long key, int k) {
 
