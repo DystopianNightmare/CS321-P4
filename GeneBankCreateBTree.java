@@ -12,7 +12,7 @@ public class GeneBankCreateBTree {
 	private static Integer t; 		//degree to be used -- this is the value for degree
 	//	private static BufferedReader br;
 	private static int cacheSize;		//if cache is used this will be the cache size
-	private static int debugLevel;		//to be used later
+	private static int debugLevel = 3;		//to be used later
 	private static boolean useCache = false; //false if arg[0] is 0
 	private static int sequenceLength;		//this is the k value
 	private static  String nameOfTree; // this will be the name of the binary file
@@ -55,7 +55,7 @@ public class GeneBankCreateBTree {
 		
 		//Get name of Binary file and make a new BTree
 		
-		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + t );	//This is the name of the binary file
+		nameOfTree = (fileName + ".btree.data." + sequenceLength  );	//This is the name of the binary file
 		BTree tree = new BTree(nameOfTree,t,sequenceLength);
 		
 		try {
@@ -101,11 +101,11 @@ public class GeneBankCreateBTree {
 						//OKAY! We now have s which we will use
 						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
 						
-						if(!s.contains("n")) {
-							System.out.println(s);
-							Long key = Long.parseLong(s);
-							tree.BTreeInsert(key);
-						}
+//						if(!s.contains("n")) {
+//							System.out.println(s);
+//							Long key = Long.parseLong(s);
+//							tree.BTreeInsert(key);
+//						}
 						
 
 						
@@ -114,23 +114,26 @@ public class GeneBankCreateBTree {
 				}
 
 			}
+			for(int i = 1; i<10;i++) {
+				Long key = (long)i;
+				System.out.println(key);
+				tree.BTreeInsert(key);
+			}
 			scan.close();
-			
+		tree.printTree();
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
-		//TESTING 1 INPUT
-//		Long key = (long) 33;
-//		
-////	the folllowing is to add XX number of values to tree and then print the tree
-//		for(int i =0; i<1000;i++) {
-//			long keytest = (long) Math.floor(i/99);
-//			System.out.println(keytest);
-//			
-//			tree.BTreeInsert(keytest);
-		
-//		tree.printTree();
-		tree.dumpTree(sequenceLength*2);
+
+		if(debugLevel == 0) {
+			System.err.println("No Status Messages. Please follow this usage example: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
+		}
+		if(debugLevel == 1) {
+//			tree.dumpTree(sequenceLength*2);
+		}
+		if(debugLevel == 3) {
+//			tree.printTree();
+		}
 		
 	}
 	public static void printUsage() {
