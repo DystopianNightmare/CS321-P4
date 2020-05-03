@@ -1,35 +1,47 @@
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+
 import java.io.PrintWriter;
-import java.math.BigInteger;
+
+
+/**
+ * 
+ *  [ 50 bytes for meta | tree object starts at 50 - | child pointer starts at 3088 ]
+ *
+ */
 
 public class BTreeNode {
 
-	private BTreeNode[] childPointer;
-	private BTreeNode parentPointer;
+	private int[] childPointer;
+	private int parentPointer;
 	private int currentlyStored;
 	private boolean isLeaf, isRoot;
-
+	private  int childOffset = 3088;
+	private int treeOffset = 50;
 	private int m;
 	private BTreeObject[] objectArray;
 	private int sequenceLength;
+	private int location;
 
 
+	public int getLocation() {
+		return location;
+	}
+	public void setLocation(int location) {
+		this.location = location;
+	}
 	//default constructor only to be used when creating Btree with no elements
-	public BTreeNode(int m, int sequenceLength)  {
+	public BTreeNode(int m, int sequenceLength, int location)  {
+		this.location = location;
 		isLeaf = true;
 		this.m = m;
 		objectArray = new BTreeObject[m];
-		childPointer = new BTreeNode[m+1];
+		childPointer = new int[m+1];
 		currentlyStored = 0;
-		parentPointer = null;
+		parentPointer = 0;
 		this.sequenceLength = sequenceLength;
 
+	}
+	public int getM() {
+		return m;
 	}
 	public BTreeObject getBTreeObject(int i) {
 		return objectArray[i];
@@ -37,6 +49,19 @@ public class BTreeNode {
 
 	public void  setBTreeObject(BTreeObject obj, int i) {
 		objectArray[i] = obj;
+	}
+	public long getKey(int i) {
+		return objectArray[i].getKey();
+	}
+	public void setKey(long val, int i) {
+		BTreeObject obj = new BTreeObject(val);
+		objectArray[i] = obj;
+	}
+	public void setFreq(int i, int f) {
+		objectArray[i].setFrequency(f);
+	}
+	public int getFreq(int i) {
+		return objectArray[i].getFrequency();
 	}
 
 	public boolean getIsLeaf() {
@@ -51,10 +76,10 @@ public class BTreeNode {
 	public boolean getIsRoot() {
 		return isRoot;
 	}
-	public BTreeNode getParentPointer() {
+	public int getParentPointer() {
 		return parentPointer;
 	}
-	public void setParentPointer(BTreeNode parentPointer) {
+	public void setParentPointer(int parentPointer) {
 		this.parentPointer = parentPointer;
 	}
 	public void setCurrentlyStored(int i) {
@@ -70,10 +95,10 @@ public class BTreeNode {
 	public boolean isFull() {
 		return currentlyStored == m*2-1;
 	}
-	public BTreeNode getChildNode(int i) {
+	public int getChildNode(int i) {
 		return childPointer[i];
 	}
-	public void setChildPointer(BTreeNode node, int i) {
+	public void setChildPointer(int node, int i) {
 		childPointer[i] = node;
 	}
 	public void traverse() {
@@ -81,7 +106,7 @@ public class BTreeNode {
 
 		for( i = 0; i < this.getCurrentlyStored(); i++) {
 			if(this.getIsLeaf() == false) {
-				childPointer[i].traverse();
+//				childPointer[i].traverse();
 
 			}
 			System.out.println(objectArray[i] +" leaf = "+ this.getIsLeaf()+ "              curr stored in node = "+this.getCurrentlyStored()+ " count : " + objectArray[i].getFrequency());
@@ -89,8 +114,8 @@ public class BTreeNode {
 		}
 
 		System.out.println(" ");
-		if (this.getIsLeaf() == false) 
-			childPointer[i].traverse(); 
+//		if (this.getIsLeaf() == false) {
+//			childPointer[i].traverse(); 
 
 	}
 	
@@ -143,24 +168,20 @@ public class BTreeNode {
 	
 	
 	
-	public void dumpTraverse(PrintWriter pw, int k) {
-		int i =0;
-		for( i = 0; i < this.getCurrentlyStored(); i++) {
-			if(this.getIsLeaf() == false) {
-				childPointer[i].dumpTraverse(pw, k);
-			}
-			System.out.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
-			pw.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
+//	public void dumpTraverse(PrintWriter pw, int k) {
+//		int i =0;
+//		for( i = 0; i < this.getCurrentlyStored(); i++) {
+//			if(this.getIsLeaf() == false) {
+//				childPointer[i].dumpTraverse(pw, k);
+//			}
+//			System.out.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
+//			pw.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
+//
+//
+//		}
+//		if (this.getIsLeaf() == false) {
+//			childPointer[i].dumpTraverse(pw, k); 
+//		}
+//	}
 
-
-		}
-		if (this.getIsLeaf() == false) {
-			childPointer[i].dumpTraverse(pw, k); 
-		}
-	}
-	public String convertToString(long val) {
-	
-		
-		return null;
-	}
 }
