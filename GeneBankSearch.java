@@ -44,7 +44,7 @@ public class GeneBankSearch {
 			j++;
 			}
 			
-			PrintWriter pw = new PrintWriter(arr[0] +"_query" + arr[1] + "_result");
+			PrintWriter pw = new PrintWriter("test" +arr[0] +"_query" + arr[1] + "_result");
 			Scanner scanQ = new Scanner(QueryFile);
 			String lineQ;
 			String lineB;
@@ -69,10 +69,12 @@ public class GeneBankSearch {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	
 
-
-
+if(debugLevel == 0) {
+	System.out.println(" print the query output to STDOUT");
+}
+}
 
 	public static void printUsage() {
 		System.out.println("java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]");

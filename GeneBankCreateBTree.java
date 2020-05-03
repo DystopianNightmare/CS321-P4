@@ -129,8 +129,12 @@ public class GeneBankCreateBTree {
 //			
 //			tree.BTreeInsert(keytest);
 		
-		tree.printTree();
-		tree.dumpTree(sequenceLength*2);
+		if(debugLevel == 0) {
+			System.err.println("No Status Messages. Please follow this usage example: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
+		}
+		if(debugLevel == 1) {
+			tree.dumpTree(sequenceLength*2);
+		}
 		
 	}
 	public static void printUsage() {

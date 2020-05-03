@@ -232,7 +232,7 @@ public class BTree {
 	public void dumpTree(int k) {
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(fileName);
+			pw = new PrintWriter("dump");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
