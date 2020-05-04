@@ -101,24 +101,23 @@ public class GeneBankCreateBTree {
 						//OKAY! We now have s which we will use
 						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
 						
-//						if(!s.contains("n")) {
-//							System.out.println(s);
-//							Long key = Long.parseLong(s);
-//							tree.BTreeInsert(key);
-//						}
-						
-
-						
+						if(!s.contains("n")) {
+							Long key = Long.parseLong(s);
+							String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
+							System.out.println(temp+ ":  "+ s);
+							tree.BTreeInsert(key);
+						}
 					}
-
 				}
-
 			}
-			for(int i = 1; i<10;i++) {
-				Long key = (long)i;
-				System.out.println(key);
-				tree.BTreeInsert(key);
-			}
+//			for(int i = 1; i<10;i++) {
+//				Long key = (long)i;
+//				System.out.println(key);
+//				if (key == 9) {
+//					System.out.println("test");
+//				}
+//				tree.BTreeInsert(key);
+//			}
 			scan.close();
 		tree.printTree();
 		} catch ( Exception e) {
@@ -129,7 +128,7 @@ public class GeneBankCreateBTree {
 			System.err.println("No Status Messages. Please follow this usage example: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
 		}
 		if(debugLevel == 1) {
-//			tree.dumpTree(sequenceLength*2);
+			tree.dumpTree(sequenceLength*2);
 		}
 		if(debugLevel == 3) {
 //			tree.printTree();
