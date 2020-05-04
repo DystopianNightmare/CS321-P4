@@ -12,12 +12,15 @@ public class GeneBankCreateBTree {
 	private static Integer t; 		//degree to be used -- this is the value for degree
 	//	private static BufferedReader br;
 	private static int cacheSize;		//if cache is used this will be the cache size
-	private static int debugLevel;		//to be used later
+	private static int debugLevel = 3;		//to be used later
 	private static boolean useCache = false; //false if arg[0] is 0
 	private static int sequenceLength;		//this is the k value
 	private static  String nameOfTree; // this will be the name of the binary file
 	private BTree tree;
+	private static Cache cache;
 
+
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
 
 		//use a try-catch to parse all arguments. incorrect param will print usage
@@ -26,7 +29,9 @@ public class GeneBankCreateBTree {
 			if(Integer.parseInt(args[0]) == 1) {
 				useCache = true;
 				cacheSize = Integer.parseInt(args[4]);
-				if(args[5] != null) {								//if cache is being used a cache, debug is in position 5 of args
+				cache = new Cache(cacheSize);
+
+				if(args.length == 6) {								//if cache is being used a cache, debug is in position 5 of args
 					debugLevel = Integer.parseInt(args[5]);
 				}
 			}else {
@@ -37,8 +42,8 @@ public class GeneBankCreateBTree {
 
 			//parse degree
 			t = Integer.parseInt(args[1]);	
-			if(t == 0) {
-				//implement something to use the optimal degree
+			if(t == 0 ) {
+				t=31;		//optimal degree
 			}
 			//get sequence length
 			sequenceLength = Integer.parseInt(args[3]);
@@ -47,90 +52,113 @@ public class GeneBankCreateBTree {
 			}
 			//parse debug level
 		}catch(Exception e) {
+			e.printStackTrace();
 			printUsage();
 		}
 
 		//get gbk file
 		String fileName = args[2];
-		
+
 		//Get name of Binary file and make a new BTree
-		
-		nameOfTree = (fileName + ".btree.data." + sequenceLength + "." + t );	//This is the name of the binary file
-		BTree tree = new BTree(nameOfTree,t);
-		
+
+		nameOfTree = (fileName + ".btree.data." + sequenceLength  );	//This is the name of the binary file
+
+		BTree tree = new BTree(nameOfTree,t,sequenceLength);
+
 		try {
 			Scanner scan = new Scanner(new FileReader(fileName));
 			String line;
 
 			while(scan.hasNextLine()) {
 				line = scan.nextLine();
-				
+
 				while(line.startsWith("ORIGIN")) {
 					String character = "";
 					line =  scan.nextLine();
-					
+
 					while(!line.startsWith("//")) {
 						for(int i = 0; i < line.length(); i++) {
-							if(line.charAt(i) == 'a' || line.charAt(i) == 'c' || line.charAt(i) == 'g' || line.charAt(i) == 't') {
+							if(line.charAt(i) == 'a' || line.charAt(i) == 'c' || line.charAt(i) == 'g' || line.charAt(i) == 't' || line.charAt(i) == 'n'|| line.charAt(i) == 'A'|| line.charAt(i) == 'C'|| line.charAt(i) == 'G'|| line.charAt(i) == 'T') {
 								character += line.charAt(i);
 							}
 						}
 						line = scan.nextLine();
 					}
-
+					//make string of values
 					for(int i = 0; i < character.length()-sequenceLength+1;i++) {
 						String s = "";
 						for(int j = 0; j < sequenceLength; j++) {
-							if(character.charAt(i+j) == 'a' || character.charAt(i+j) == 'A') {
-								s += "00";
-							}
-							if(character.charAt(i+j) == 't' || character.charAt(i+j) == 'T') {
-								s += "11";
-							}
-							if(character.charAt(i+j) == 'c' || character.charAt(i+j) == 'C') {
-								s += "01";
-							}
-							if(character.charAt(i+j) == 'g' || character.charAt(i+j) == 'G') {
-								s += "10";
-							}
-							if(character.charAt(i+j) == 'n' || character.charAt(i+j) == 'N') {
-								s += "n";
-							}
-							
+							s += character.charAt((i+j));
+
 						}
-						//OKAY! We now have s which we will use
-						// S is the String of 0 ad 1's to converted to long - 0's in the front are dropped until the first 1, so 00000111 is just 111
-						
+					
 						if(!s.contains("n")) {
-						Long key = Long.parseLong(s);
+							Long tmp;
+							if(useCache) {
+								if((tmp=((Long)(cache.search(s)))) != null ) {
+									tree.BTreeInsert(tmp);
+									
+								}else {
+									long key = convert(s);
+									String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
+									cache.addToCache(s,key);
+									tree.BTreeInsert(key);
+									
+								}
+							}else {
+								long key = convert(s);
+								String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
+								tree.BTreeInsert(key);
+							}
 						}
-//						tree.addObjectToNode(key);
-
-						
 					}
-
 				}
-
 			}
 			scan.close();
-			
+			tree.dumpTree(sequenceLength*2);
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
-		//TESTING 1 INPUT
-		Long key = (long) 33;
-		
-//	the folllowing is to add XX number of values to tree and then print the tree
-		for(int i =0; i< 12; i++) {
-			long keytest = (long) i;
-			System.out.println(keytest);
-			tree.BTreeInsert(keytest);
+
+		if(debugLevel == 0) {
+			System.err.println("No Status Messages. Please follow this usage example: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
 		}
-		tree.printTree();
-			
+		if(debugLevel == 1) {
+			tree.dumpTree(sequenceLength*2);
+		}
 		
+
 	}
 	public static void printUsage() {
 		System.out.println("java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
+	}
+	public static long convert(String character) {
+
+		String s = "";
+		for(int j = 0; j < character.length(); j++) {
+
+
+			if(character.charAt(j) == 'a' || character.charAt(j) == 'A') {
+				s += "00";
+			}
+			if(character.charAt(j) == 't' || character.charAt(j) == 'T') {
+				s += "11";
+			}
+			if(character.charAt(j) == 'c' || character.charAt(j) == 'C') {
+				s += "01";
+			}
+			if(character.charAt(j) == 'g' || character.charAt(j) == 'G') {
+				s += "10";
+			}
+			if(character.charAt(j) == 'n' || character.charAt(j) == 'N') {
+				s += "n";
+
+
+			}
+		}
+
+		Long key = Long.parseLong(s);
+		return key;	
+
 	}
 }
