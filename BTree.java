@@ -210,17 +210,17 @@ public class BTree {
 		// promote middle-1 key to parent 
 		i = parent.getCurrentlyStored();
 		while(i >= 1 && val < parent.getKey(i-1)) {
-			parent.setKey(parent.getKey(i-1),i);
+			parent.setBTreeObject(parent.getBTreeObject(i-1), i);
 			i--;
 		}
 
-		parent.setKey(y.getKey(middle-1), i);
+		parent.setBTreeObject(y.getBTreeObject(middle-1), i);
 		parent.incrementCurrentlyStored();
 
 		// take top half objects from array y and put in array z
 		int tmp = y.getCurrentlyStored()/2;
 		for(int j =0; j<tmp; j++) {
-			z.setKey(y.getKey(j+tmp),j); //z.key = y.key+t
+			z.setBTreeObject(y.getBTreeObject(j+tmp), j); //z.key = y.key+t
 		}
 		y.setCurrentlyStored(middle-1);
 		z.setCurrentlyStored(middle);	
@@ -294,34 +294,34 @@ public class BTree {
 	
 	
 	 
-	public void printTree() throws IOException {
-		System.out.println(" ");	//blank space
-		traverse(root);
-
-	}
-	public void traverse(BTreeNode node) throws IOException {
-		int i = 0;
-	
-//		BTreeNode node1 = new BTreeNode(0,0,0);
-		for( i = 0; i < node.getCurrentlyStored(); i++) {
-			if(node.getIsLeaf() == false) {
-				System.out.println();
-				node=readNodeFromDisk(node.getChildPointer(i));
-				traverse(node);
-			}
-			System.out.println(node.getKey(i) + " leaf = "+ node.getIsLeaf()+ "              curr stored in node = "+node.getCurrentlyStored());
-
-		}
-
+//	public void printTree() throws IOException {
+//		System.out.println(" ");	//blank space
+//		traverse(root);
+//
+//	}
+//	public void traverse(BTreeNode node) throws IOException {
+//		int i = 0;
+//	
+////		BTreeNode node1 = new BTreeNode(0,0,0);
+//		for( i = 0; i < node.getCurrentlyStored(); i++) {
+//			if(node.getIsLeaf() == false) {
+//				System.out.println();
+//				node=readNodeFromDisk(node.getChildPointer(i));
+//				traverse(node);
+//			}
+//			System.out.println(node.getKey(i) + " leaf = "+ node.getIsLeaf()+ "              curr stored in node = "+node.getCurrentlyStored());
+//
+//		}
+//
+////		System.out.println(" ");
+////		if (this.getIsLeaf() == false) {
+////			childPointer(i).traverse(); 
 //		System.out.println(" ");
-//		if (this.getIsLeaf() == false) {
-//			childPointer(i).traverse(); 
-		System.out.println(" ");
-		if (node.getIsLeaf() == false) {
-			node=readNodeFromDisk(node.getChildPointer(i));
-			traverse(node);
-		}
-	}
+//		if (node.getIsLeaf() == false) {
+//			node=readNodeFromDisk(node.getChildPointer(i));
+//			traverse(node);
+//		}
+//	}
 
 
 
