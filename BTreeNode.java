@@ -24,7 +24,7 @@ public class BTreeNode {
 	public int getOffset() {
 		return offset;
 	}
-	public void setLocation(int location) {
+	public void setOffset(int location) {
 		this.offset = location;
 	}
 	//default constructor only to be used when creating Btree with no elements
@@ -56,7 +56,7 @@ public class BTreeNode {
 		BTreeObject obj = new BTreeObject(val);
 		objectArray[i] = obj;
 	}
-	public void setFreq(int i, int f) {
+	public void setFreq(int f, int i) {
 		objectArray[i].setFrequency(f);
 	}
 	public int getFreq(int i) {
@@ -94,94 +94,18 @@ public class BTreeNode {
 	public boolean isFull() {
 		return currentlyStored == m*2-1;
 	}
-	public int getChildNode(int i) {
+	public int getChildPointer(int i) {
 		return childPointer[i];
 	}
 	public void setChildPointer(int node, int i) {
 		childPointer[i] = node;
 	}
-//	public void traverse() {
-//		int i = 0;
-//		BTreeNode node = new BTreeNode(0,0,0);
-//		for( i = 0; i < this.getCurrentlyStored(); i++) {
-//			if(this.getIsLeaf() == false) {
-//				node=this.getChildNode(i)
-//
-//			}
-//			System.out.println(objectArray[i] +" leaf = "+ this.getIsLeaf()+ " curr stored in node = "+this.getCurrentlyStored()+ " count : " + objectArray[i].getFrequency());
-//
-//		}
-//
-//		System.out.println(" ");
-//		if (this.getIsLeaf() == false) {
-//			childPointer(i).traverse(); 
-//		}
-//
-//	}
 	
-	private String padZero(long key, int k) {
-
-		int keyLength = String.valueOf(key).length();
-		int difference = k - keyLength;
-		
-
-		if (difference == 0) {
-			return Long.toString(key);
-		}
-		else if (difference == 1) {
-			String merge = "0"+Long.toString(key);
-			return merge;
-		}
-		else {
-			String zero = "";
-			for (int i=0; i<difference; i++) {
-				zero = zero+"0";
-			}
-			String merge = zero+Long.toString(key);
-			return merge;
-		}
-	}
-	
-	
-	private static String keyToGene(String str) {
-		String returnStr = "";
-		for(int i = 0; i < str.length();i = i+2) {
-			String subStr = str.substring(i, i+2);
-
-			if(subStr.charAt(0) == '0' && subStr.charAt(1) == '0') {
-				returnStr += "A";
-			}
-			if(subStr.charAt(0) == '1' && subStr.charAt(1) == '1') {
-				returnStr += "T";
-			}
-			if(subStr.charAt(0) == '0' && subStr.charAt(1) == '1') {
-				returnStr += "C";
-			}
-			if(subStr.charAt(0) == '1' && subStr.charAt(1) == '0') {
-				returnStr += "G";
-			}
-
-		}
-		return returnStr;
-	}
-	
-	
-	
-	
-//	public void dumpTraverse(PrintWriter pw, int k) {
-//		int i =0;
-//		for( i = 0; i < this.getCurrentlyStored(); i++) {
-//			if(this.getIsLeaf() == false) {
-//				childPointer[i].dumpTraverse(pw, k);
-//			}
-//			System.out.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
-//			pw.println(keyToGene((padZero(objectArray[i].getKey(), k))) +": " + objectArray[i].getFrequency() );
-//
-//
-//		}
-//		if (this.getIsLeaf() == false) {
-//			childPointer[i].dumpTraverse(pw, k); 
-//		}
-//	}
-
 }
+
+
+
+
+
+
+
