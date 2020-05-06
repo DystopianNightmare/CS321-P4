@@ -34,6 +34,13 @@ public class BTree {
 		BTreeCreateNode();
 	}
 
+	/**
+	 * constructor for BTree, to search the RandomAccessFile
+	 */
+	public BTree() {
+		
+	}
+	
 	public int getSequenceLength() {
 		return sequenceLength;
 	}
@@ -288,7 +295,9 @@ public class BTree {
 
 	
 	
-	
+	public void closeFile() throws IOException {
+		RAF.close();
+	}
 	
 	
 	
@@ -409,9 +418,53 @@ public class BTree {
 
 	
 	
+	
+	
+//	int  childPinter = node.getChildPointer(i);
+//	BTreeNode childNode = readNodeFromDisk(childPinter);
+	public String searchTree(int nodePointer, Long queryKey, int sequenceLength) throws IOException {
+
+		BTreeNode node = readNodeFromDisk(nodePointer);
+
+		if (node.getIsLeaf() == true) {
+			for (int i = 0; i < node.getCurrentlyStored(); i ++) {
+				if (node.getKey(i) == queryKey) {
+					return keyToGene((padZero(node.getKey(i), sequenceLength))) +": " + node.getFreq(i);
+				}
+				else {
+					return keyToGene((padZero(queryKey, sequenceLength))) +": 0"; 			// if not found return frequency of 0
+				}
+			}
+		}
+		while (node.getIsLeaf() == false ) {
+			int i =0;
+			for (i = 0; i < node.getCurrentlyStored(); i ++) {
+				if (node.getKey(i) == queryKey) {
+					return keyToGene((padZero(node.getKey(i), sequenceLength))) +": " + node.getFreq(i);
+				}
+				if (node.getKey(i) > queryKey) {
+					int  childPinter = node.getChildPointer(i);
+					searchTree(childPinter, queryKey, sequenceLength);
+				}	
+			}
+			int  childPinter = node.getChildPointer(i+1);
+			searchTree(childPinter, queryKey, sequenceLength);
+			 
+		}
+		return "And I broke it .....";
+	}
+	
+	public String readFileSearch(RandomAccessFile RAFName, Long queryKey) throws IOException {
+		RAFName.seek(0);					// file meta data always starts at 0
+		int offset = RAFName.readInt();
+		int m = RAFName.readInt();
+		int t = RAFName.readInt();
+		int sequenceLength = RAFName.readInt();
+		int rootPointer = RAFName.readInt();
+		return searchTree(rootPointer, queryKey, sequenceLength);
+
+
+	}
+	
+	
 }
-
-
-
-
-
