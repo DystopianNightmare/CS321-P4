@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,8 @@ public class GeneBankSearch {
 	private static boolean useCache = false; //false if arg[0] is 0
 	private static File BTreeFile;
 	private static File QueryFile;
-
+	private static RandomAccessFile RAF;
+	private static Cache cache;
 
 	public static void main(String[] args) {
 
@@ -23,12 +25,13 @@ public class GeneBankSearch {
 			if(Integer.parseInt(args[0]) == 1) {
 				useCache = true;
 				cacheSize = Integer.parseInt(args[3]);
-				if(args[4] != null) {								//if cache is being used a cache, debug is in position 5 of args
+				cache = new Cache(cacheSize);
+				if(args.length ==5) {								//if cache is being used a cache, debug is in position 5 of args
 					debugLevel = Integer.parseInt(args[4]);
 				}
 			}else {
 				if(args.length == 5) {								////if cache is being used a cache, debug is in position 4 of array since cache size is not used
-					debugLevel = Integer.parseInt(args[4]);
+					debugLevel = Integer.parseInt(args[3]);
 				}
 			}
 			//make files from args
@@ -40,43 +43,125 @@ public class GeneBankSearch {
 			String[] arr = new String[5];
 			int j = 0;
 			while(m.find()) {
-			arr[j] = m.group();
-			j++;
+				arr[j] = m.group();
+				j++;
 			}
-			
-			PrintWriter pw = new PrintWriter("test" +arr[0] +"_query" + arr[1] + "_result");
+			BTree tree = new BTree();
+
+			RAF = new RandomAccessFile(BTreeFile,"r");
+			File tmpFile = tree.buildTree(RAF);
+
+
+			String pwFileName ="test" +arr[0] +"_query" + arr[1] + "_result";
+			PrintWriter pw = new PrintWriter(pwFileName);
 			Scanner scanQ = new Scanner(QueryFile);
 			String lineQ;
-			String lineB;
-			
-			while(scanQ.hasNext()) {
-				Scanner scanB = new Scanner(BTreeFile);
-				lineB = scanB.nextLine();
-				lineQ=scanQ.nextLine().toUpperCase();
-				while(scanB.hasNextLine()) {
-					if(lineB.contains(lineQ)) {
-						System.out.println(lineB);
-						pw.println(lineB);
-					}
+			String lineTmp;
+			Long tmp;
 
-					lineB=scanB.nextLine();
+
+			while(scanQ.hasNext()) {
+				Scanner scanTmp = new Scanner(tmpFile);
+				lineQ=scanQ.nextLine();
+				//				long key = convert(lineQ);
+				//				String string = Long.toString(key);
+
+				if(useCache) {
+
+					while(scanTmp.hasNextLine()) {
+						lineTmp=scanTmp.nextLine();
+						int i = 0;
+						while(lineTmp.charAt(i) != ':') {
+							i++;
+						}
+						String end = (String) lineTmp.substring(i, lineTmp.length());
+						String temp = (String) cache.search(lineTmp.substring(0, i));
+
+						if(temp != null ) {
+
+							if(temp.equals(lineQ)) {
+								System.out.println("IN CACHE");
+								System.out.println(lineQ);
+								System.out.println(temp + " <-- this is temp" + end);
+								pw.println(lineQ + lineTmp.substring(i, lineTmp.length()));
+							}
+						}else {
+
+							long key = convert(lineQ);
+							String string = Long.toString(key);
+							
+							if(lineTmp.substring(0, i).contentEquals(string)) {
+								cache.addToCache(lineTmp.substring(0, i),lineQ);
+								System.out.println("not in cache");
+								System.out.println(string + " " + lineTmp.substring(i, lineTmp.length()));
+								pw.println(lineQ + lineTmp.substring(i, lineTmp.length()));
+							}
+						}
+					}
+				}else {
+					long key = convert(lineQ);
+					String string = Long.toString(key);
+					while(scanTmp.hasNextLine()) {
+						lineTmp=scanTmp.nextLine();
+						int i = 0;
+						while(lineTmp.charAt(i) != ':') {
+							i++;
+						}
+						if(lineTmp.substring(0, i).contentEquals(string)) {
+							System.out.println(lineQ + lineTmp.subSequence(i, lineTmp.length()));
+							pw.println(lineQ + lineTmp.subSequence(i, lineTmp.length()));
+						}
+					}
+					scanTmp.close();
 				}
-				scanB.close();
 			}
+
+
 			scanQ.close();
 			pw.close();
+
+
 
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-	
 
-if(debugLevel == 0) {
-	System.out.println(" print the query output to STDOUT");
-}
-}
+
+		if(debugLevel == 0) {
+			System.out.println(" print the query output to STDOUT");
+		}
+	}
 
 	public static void printUsage() {
 		System.out.println("java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]");
+	}
+	public static long convert(String character) {
+
+		String s = "";
+		for(int j = 0; j < character.length(); j++) {
+
+
+			if(character.charAt(j) == 'a' || character.charAt(j) == 'A') {
+				s += "00";
+			}
+			if(character.charAt(j) == 't' || character.charAt(j) == 'T') {
+				s += "11";
+			}
+			if(character.charAt(j) == 'c' || character.charAt(j) == 'C') {
+				s += "01";
+			}
+			if(character.charAt(j) == 'g' || character.charAt(j) == 'G') {
+				s += "10";
+			}
+			if(character.charAt(j) == 'n' || character.charAt(j) == 'N') {
+				s += "n";
+
+
+			}
+		}
+
+		Long key = Long.parseLong(s);
+		return key;	
+
 	}
 }

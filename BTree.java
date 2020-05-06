@@ -22,12 +22,16 @@ public class BTree {
 	private static final int NODE_SIZE = 4096;
 	private int rootLocation;
 
+	public BTree() {
+		
+	}
 	public BTree(String name, int t, int sequenceLength) throws IOException  {
 		//make a new file to write to. M is number of values per node, call btreecreate to get a tree with 1 node
 		this.t = t;
 		m= t*2;
 		middle = (int)Math.floor(t);	//find middle node
 		fileName = name;
+		System.out.println(name);
 
 		this.sequenceLength = sequenceLength;
 		RAF = new RandomAccessFile(fileName, "rw");
@@ -80,13 +84,14 @@ public class BTree {
 	}
 	public BTreeNode readNodeFromDisk(int pointer) throws IOException {
 		BTreeNode node = new BTreeNode(m,sequenceLength, currentOffset);
+		
 		int location = (pointer * NODE_SIZE) +FILE_META_OFFSET;
 		RAF.seek(location);
 		node.setOffset(RAF.readInt());
 		node.setCurrentlyStored(RAF.readInt());
 		node.setParentPointer(RAF.readInt());
 		node.setIsLeaf(RAF.readBoolean());
-
+		
 		for(int j = 0; j < node.getM()+1; j++) {
 			node.setChildPointer(RAF.readInt(), j);
 
@@ -105,7 +110,55 @@ public class BTree {
 		RAF.writeInt(t);
 		RAF.writeInt(sequenceLength);
 		RAF.writeInt(rootLocation);
+		
 		//		RAF.close();
+	}
+
+	public BTree readFileMetaData(RandomAccessFile file) throws IOException {
+		file.seek(0);
+		BTree tree = new BTree();
+		tree.setCurrentOffset(file.readInt());
+		tree.setM(file.readInt());
+		tree.setT(file.readInt());
+		tree.setSequenceLength(file.readInt());
+		tree.setRootLocation(file.readInt());
+		return tree;
+		
+	}
+	public int getM() {
+		return m;
+	}
+
+	public void setM(int m) {
+		this.m = m;
+	}
+
+	public int getT() {
+		return t;
+	}
+
+	public void setT(int t) {
+		this.t = t;
+	}
+
+	public int getCurrentOffset() {
+		return currentOffset;
+	}
+
+	public void setCurrentOffset(int currentOffset) {
+		this.currentOffset = currentOffset;
+	}
+
+	public int getRootLocation() {
+		return rootLocation;
+	}
+
+	public void setRootLocation(int rootLocation) {
+		this.rootLocation = rootLocation;
+	}
+
+	public void setSequenceLength(int sequenceLength) {
+		this.sequenceLength = sequenceLength;
 	}
 
 	/**
@@ -406,8 +459,48 @@ public class BTree {
 		traverseDump(pw, root, k);
 		pw.close();
 	}
-
+	public File buildTree(RandomAccessFile file) throws IOException {
+		String fileName1 = "tmpdmp.txt";
+		File file1 = new File(fileName1);
+		RAF = file;
+		BTree tree = readFileMetaData(file);
+		m = tree.getM();
+		
+		BTreeNode root  = readNodeFromDisk(tree.getRootLocation());
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new File(fileName1));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		buildTreeTravrse(pw, root, tree.getSequenceLength());
+		pw.close();
+		
+		return file1;
+	}
 	
+	public void buildTreeTravrse(PrintWriter pw, BTreeNode rootNode, int sequenceLength) throws IOException {
+		BTreeNode node = rootNode;
+		int i =0;
+		for (i = 0; i < node.getCurrentlyStored(); i ++) {
+
+			if(node.getIsLeaf() == false) {
+				int  childPinter = node.getChildPointer(i);
+				BTreeNode childNode = readNodeFromDisk(childPinter);
+				buildTreeTravrse(pw, childNode, sequenceLength);
+			}
+
+		
+			System.out.println(node.getKey(i) +": " + node.getFreq(i));
+			pw.println(node.getKey(i) +": " + node.getFreq(i));
+		}
+		if(node.getIsLeaf() == false) {
+			int  childPinter = node.getChildPointer(i);
+			BTreeNode childNode = readNodeFromDisk(childPinter);
+			buildTreeTravrse(pw, childNode, sequenceLength);
+
+		}
+	}
 	
 }
 

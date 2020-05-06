@@ -116,6 +116,7 @@ public class GeneBankCreateBTree {
 			}
 			scan.close();
 			tree.dumpTree(sequenceLength*2);
+			
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}

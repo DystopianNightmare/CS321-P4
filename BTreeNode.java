@@ -20,6 +20,9 @@ public class BTreeNode {
 	private int sequenceLength;
 	private int offset;
 
+	public BTreeNode() {
+		
+	}
 
 	public int getOffset() {
 		return offset;
