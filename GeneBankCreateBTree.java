@@ -18,11 +18,11 @@ public class GeneBankCreateBTree {
 	private static  String nameOfTree; // this will be the name of the binary file
 	private BTree tree;
 	private static Cache cache;
-
+	private static long time;
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
-
+	
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
 			//use caching or not
@@ -94,17 +94,18 @@ public class GeneBankCreateBTree {
 
 						if(!s.contains("n")) {
 							Long tmp;
+							long key1 = convert(s);
 							if(useCache) {
-//								if((tmp=((Long)(cache.search(s)))) != null ) {
-//									tree.BTreeInsert(tmp);
-//
-//								}else {
+								if((tmp=((Long)(cache.search(s)))) !=null && tmp == key1 ) {
+									tree.BTreeInsert(tmp);
+
+								}else {
 									long key = convert(s);
 									String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
 									cache.addToCache(s,key);
 									tree.BTreeInsert(key);
 
-//								}
+								}
 							}else {
 								long key = convert(s);
 								String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
@@ -115,6 +116,7 @@ public class GeneBankCreateBTree {
 				}
 			}
 			scan.close();
+			
 			
 
 		} catch ( Exception e) {

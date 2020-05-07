@@ -21,7 +21,7 @@ public class GeneBankSearch {
 
 	public static void main(String[] args) {
 		
-		time = System.currentTimeMillis();
+		
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
 			//use caching or not
@@ -126,9 +126,7 @@ public class GeneBankSearch {
 		if(debugLevel == 0) {
 			System.out.println(" print the query output to STDOUT");
 		}
-		long timenow;
-		timenow = System.currentTimeMillis();
-		System.out.println("Time to run: " + (timenow-time));
+		
 	}
 
 	public static void printUsage() {
