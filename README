@@ -10,9 +10,9 @@
 
 OVERVIEW:
 
- In this program, GeneBankCreateBTree creates a BTree of genetic keys from a given GeneBank file and stores the 
- tree to disk as a binary file. GeneBankSearch can then search the created BTreeFile against a query file for gene 
- sequences of a specified length.
+ In this program, GeneBankCreateBTree creates a BTree out of nodes storing genetic keys from a given GeneBank file and 
+ stores the tree to disk as a binary file. GeneBankSearch can then search the created BTreeFile against a query file for 
+ gene sequences of a specified length.
 
 INCLUDED FILES:
 
