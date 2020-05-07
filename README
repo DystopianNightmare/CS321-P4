@@ -1,0 +1,90 @@
+****************
+* Bioinformatics
+* CS 321
+* 5/6/20
+* Team 6:
+* Josh Gandolfo
+* Joe Green
+* Kate Rosenthal
+**************** 
+
+OVERVIEW:
+
+ In this program, GeneBankCreateBTree creates a BTree of genetic keys from a given GeneBank file and stores the 
+ tree to disk in a binary file. GeneBankSearch can then search the created BTree file for Gene sequences of a 
+ specified length when given a query file to reference.
+
+INCLUDED FILES:
+
+ * BTree.java - source file
+ * BTreeNode.java - source file
+ * BTreeObject.java - source file
+ * Cache.java - source file
+ * GeneBankCreateBTree.java - source file
+ * GeneBankSearch.java - source file
+ * IUSingleLinkedList.java - source file
+ * SLLNode.java - source file
+ * README - this file
+
+COMPILING AND RUNNING:
+
+ From the directory containing all source files, compile the
+ driver class (and all dependencies) with the command:
+ $ javac *.java
+
+ Run the compiled class files using the commands:
+ 
+ $ java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length>
+ [<cache size>] [<debug level>]
+
+ $java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>]
+ [<debug level>]
+ 
+ Additional info: 
+ 
+ * <degree> is the degree of the BTree (if the user specifies 0, then an optimum degree 
+    is chosen by the program)
+ * <sequence length> (k) is an integer that must be between 1 and 31 (inclusive)
+ * <btree file> is the BTree file constructed by GeneBankCreateBTree using a
+   <gbk file> and proper <sequence length>
+ * <query file> should contain all the DNA strings of a specific sequence length that
+   the user wants to search for in the <btree file>
+
+PROGRAM DESIGN AND IMPORTANT CONCEPTS:
+ 
+ BTreeObject.java - Creates an object that is able to store a key(gene sequence) and its frequency
+ 
+ BTreeNode.java - Creates a node capable of storing an array of BTreeObjects, parent and child pointers, 
+ and information necessary for creating a BTree structure (if nodes are leaves/roots, the max # of children
+ a node can have, offsets for storing data properly, and a sequence length). 
+ 
+ BTree.java - This class contains the logic for storing information to disk as a Btree data structure, 
+ as well as methods to access the information from the file once it is stored. As a tree is created, it takes in 
+ a name for the file it will be stored in, the minimum # of children allowed per node, and a sequence length for the keys being stored. 
+ As nodes are added to the tree, they are given an offset based on the number of nodes that have already been written
+ to the file. 
+ 
+ GeneBankCreateBTree.java - 
+ 
+ GeneBankSearch.java -
+ 
+ Cache.java - ?
+ 
+
+
+TESTING:
+
+ This program was tested using the provided testing files and examples. When any output from the console or dump 
+ files did not match the given examples appropriately, debugging was done manually in Eclipse. 
+
+
+DISCUSSION:
+
+You need to turn in a README file that describes the layout of the B-Tree file on
+disk as well as any other relevant observations.
+
+Cache Size 100- 
+Cache Size 500-
+  
+ 
+ 
