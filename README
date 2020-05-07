@@ -91,7 +91,9 @@ DISCUSSION:
  -The first 50 bytes of the BTreeFile are reserved for the BTree's meta data
  -Each node gets 4096 bytes allocated for it
  -Of that 4096, the first 20 bytes are for the node's meta data
- -Child pointers start at 3088 bytes
+ -Child pointers are stored immediately following the meta data
+ -Keys are stored after child pointers
+ -If a node has no children, the space is buffered with 0's
 
  Cache.java:
  
