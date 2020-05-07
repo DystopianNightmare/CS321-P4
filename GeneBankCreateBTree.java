@@ -23,7 +23,7 @@ public class GeneBankCreateBTree {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
 
-		long time = System.currentTimeMillis();
+		
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
 			//use caching or not
@@ -122,8 +122,7 @@ public class GeneBankCreateBTree {
 		}
 		if(debugLevel == 0) {
 			System.err.println("No Status Messages. Please follow this usage example: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
-			long timenow = System.currentTimeMillis();
-			System.out.println("Time to run: " + (timenow-time));
+			
 		}
 		if(debugLevel == 1) {
 			tree.dumpTree(sequenceLength*2);

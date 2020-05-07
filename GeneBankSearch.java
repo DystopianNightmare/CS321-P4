@@ -18,12 +18,14 @@ public class GeneBankSearch {
 	private static File BTreeFile;
 	private static File QueryFile;
 	private static RandomAccessFile RAF;
+ @SuppressWarnings("rawtypes")
 	private static Cache cache;
-	private static long time;
 
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 
-		time = System.currentTimeMillis();
+	
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
 			//use caching or not
@@ -35,7 +37,7 @@ public class GeneBankSearch {
 					debugLevel = Integer.parseInt(args[4]);
 				}
 			}else {
-				if(args.length == 5) {								////if cache is being used a cache, debug is in position 4 of array since cache size is not used
+				if(args.length == 4) {								////if cache is being used a cache, debug is in position 4 of array since cache size is not used
 					debugLevel = Integer.parseInt(args[3]);
 				}
 			}
@@ -73,6 +75,9 @@ public class GeneBankSearch {
 						String results = tree.readFileSearch(RAF, keyQ);
 						if (!results.contentEquals("none")) {
 							pw.println(results);
+							if(debugLevel == 0) {
+								System.out.println(results);
+							}
 						}
 					}
 					else {
@@ -81,6 +86,9 @@ public class GeneBankSearch {
 						String results = tree.readFileSearch(RAF, keyQ);
 						if (!results.contentEquals("none")) {
 							pw.println(results);
+							if(debugLevel == 0) {
+								System.out.println(results);
+							}
 						}						
 					}
 				}
@@ -89,6 +97,9 @@ public class GeneBankSearch {
 					String results = tree.readFileSearch(RAF, keyQ);
 					if (!results.contentEquals("none")) {
 						pw.println(results);
+						if(debugLevel == 0) {
+							System.out.println(results);
+						}
 					}				
 				}
 			}
@@ -102,12 +113,8 @@ public class GeneBankSearch {
 		}
 
 
-		if(debugLevel == 0) {
-			System.out.println(" print the query output to STDOUT");
-		}
-		long timenow;
-		timenow = System.currentTimeMillis();
-		System.out.println("Time to run: " + (timenow-time));
+		
+		
 	}
 
 	/**
