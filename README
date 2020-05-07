@@ -10,9 +10,9 @@
 
 OVERVIEW:
 
- In this program, GeneBankCreateBTree creates a BTree out of nodes storing genetic keys from a given GeneBank file and 
- stores the tree to disk as a binary file. GeneBankSearch can then search the created BTreeFile against a query file for 
- gene sequences of a specified length.
+ In this program, GeneBankCreateBTree creates a BTree of keys from a given GeneBank file and stores the 
+ tree to disk as a binary file. GeneBankSearch can then search the created BTreeFile against a query file for gene 
+ sequences of matching length.
 
 INCLUDED FILES:
 
@@ -41,7 +41,7 @@ COMPILING AND RUNNING:
  [<debug level>]
  
  Additional info: 
- 
+ GeneBankCreateBTree must first be ran to create the file before GeneBankSearch is able to run.
  * <degree> is the degree of the BTree (if the user specifies 0, then an optimum degree 
     is chosen by the program)
  * <sequence length> (k) is an integer that must be between 1 and 31 (inclusive)
@@ -52,15 +52,15 @@ COMPILING AND RUNNING:
 
 PROGRAM DESIGN AND IMPORTANT CONCEPTS:
  
- BTreeObject.java - Creates an object that is able to store a key(gene sequence) and its frequency
+ BTreeObject.java - Creates an object that can store a key (gene sequence) and its frequency
  
  BTreeNode.java - Creates a node capable of storing an array of BTreeObjects (keys and frequencies), 
  parent and child pointers, and information necessary for creating a BTree structure (if nodes are leaves/roots, 
  the maximum # of children a node can have, offsets for storing data properly, and a sequence length for a key). 
  
- BTree.java - This class contains the logic for storing information to disk as a Btree data structure, as well as 
+ BTree.java - This class contains the logic for storing information to disk as a Btree data structure utilizing a Random Access File, as well as 
  methods to access the information from the file once it is stored. As a tree is created, it takes in a name for the 
- file it will be stored in, the minimum # of children per node (degree of the tree), and a sequence length for the 
+ file it will be stored in, the maximum number of children per node (degree of the tree), and a sequence length for the 
  keys being stored. 
  As nodes are added to the tree, they are added at an offset based on the number of nodes that have already been 
  written to the file. New nodes are always added at the end, even when they are created by a split, and their 
@@ -68,7 +68,7 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
  in the information at the offset specific to that node in order to reconstruct the node from memory without needing 
  to re-create the entire tree.
  
- GeneBankCreateBTree.java - When given a GeneBankFile and a file name, reads in a GeneBankFile and parses the 
+ GeneBankCreateBTree.java - When given a file containing the genetic sequences, GeneBankCreateBTree parses the 
  information into binary keys of a specified length. These keys are then passed to BTree where they are stored to 
  disk in a carefully formatted BTreeFile. 
  
@@ -76,37 +76,33 @@ PROGRAM DESIGN AND IMPORTANT CONCEPTS:
  It then traverses all nodes of the BTree file, storing each key and frequency in a temporary dump file.
  That temporary file is then compared to the query file to create a query result file, displaying which
  sequences from the query file were found in the BTree's keys and how often they appeared.
+
+Cache.java - a cache is used to hold commonly accessed information. When converting to binary or back to alphabetic representations that cache will store the key and its value and when search returns the value if the cache holds it. If the cache does not hold it then the key and value are added to the cache.
+
+The program is first ran using GeneBankCreateBTree, referred to as GBCBT, and supplying a genetic sequence as well as the necessary parameters. GBCBT first parses the arguments, creates a new instance of BTree and passes the parameters. GBCBT next scan the file and once ORIGIN is found it will add all the following ACGTN characters to a string until // is found. Next GBCBT will take that string and chop it into new strings of the correct size. If the string does not contain an unknown character denoted as an 'n', GBCBT will convert the string to a long and insert it into the BTree until all strings have been added. BTree will insert the values if they are unique into the tree. If they are not unique then the original keys frequency is incremented ad the new key is discarded (cuts down on size and storage). BTree creates a random access file and added the BTreeNodes to it as the BTree grows. Once the entire file is read and all keys are inserted then BTree will close the random access file. 
+	Next, GeneBankSearch, referred to as GBS, will take in and parse the arguments supplied at startup. GBS will convert the strings to be searched for to a long value and checks if the long value exists in the tree. If it does it then writes that string and its corresponding frequency to the result file.
  
 
 TESTING:
 
- This program was tested using the provided testing files and examples. When any output from the console or dump 
- files did not match the given examples appropriately, debugging was done manually in Eclipse. 
+Initially we tested step by step printing results to the console. As we progressed through the project our testing methods changed to reflect the work we were completing. Making sure values were properly being converted, the tree was being built and insert and split methods we working properly and that the random access file was being read correctly we all parts of different tests we ran. Once we had the program operating the way we wanted we then used the test files provided as well as the two sample outputs. It would be nice if there were more sample outputs provided so we could test our program more thoroughly against a broader spectrum.
 
 
 DISCUSSION:
 
- BTreeFile Layout:
+ BTree's Random Access File layout:
  
  -The first 50 bytes of the BTreeFile are reserved for the BTree's meta data
  -Each node gets 4096 bytes allocated for it
  -Of that 4096, the first 20 bytes are for the node's meta data
  -Child pointers are stored immediately following the meta data
- -Keys are stored after child pointers
+ -Keys and frequency are stored after child pointers
  -If a node has no children, the space is buffered with 0's
 
  Cache.java:
  
- The cache is intended to store recently accessed information and keep it in memory where
- it can be accessed again quickly if needed. This would be very useful if our BTree was designed to store
- duplicate keys, however, it is not. We simply increase a frequency count tied to a key if it appears more 
- than once so, as is, the Cache is an extra and unnecessary process in our program. 
- 
- When GeneBankCreateBTree is run with a cache size of 100, it does actually speed up by abut 50 milliseconds.
- However, with a cache size of 500, it is slowed by 800 milliseconds.
+	We designed our program to be as efficient as possible. Part of that process was to increment a frequency count when the tree tries to insert a key that already exists. This cuts down on search time and overall size of the tree. It also makes other methods such as the traverse and classes such as GeneBankSearch more efficient because we don’t need to check if a value exists and then count it multiple times as well as the need to compare it. 
+	The cache is intended to store recently access information assuming it is likely to be needed very soon. Because there are no duplicates held in the tree we could not use it to hold the most recent node because there is no guarantee the value we need next would be on the same node. Using the cache to hold 100 BTreeNodes would also require a lot of memory which defeats the purpose of writing the file to the disk. Finally, even if we did write it to store the nodes, since nodes hold multiple values, we would still need to loop through the node comparing each value.
+	Therefore, we choose to implement the cache to help with the conversion to and from longs and strings. This helps in the GeneBankSearch because it cuts down on the need to convert the string to a long if the values are stored in the cache, however because it does not take too much effort to make the conversion, the cache only really helps when it is smaller. For example, without using a cache takes around 8000ms to complete, with a cache of size 10 it was cut down to 7200ms, with a cache of size 100 it was slightly slower but still faster than not using a cache with a total time around 7950ms. However, when using a cache of 500, the time required to search up to 500 times outweighed the time it takes to make the conversion and we noticed in increase in overall time to around 8200.
+	In GeneBankSearch we used the cache in a similar method, however, because the query file likely does not contain duplicates, the cache hindered the process. Here the cache would search X many times and since there were no duplicates it never found a value and then would have to run the conversion and add the values to the cache. Running GeneBankSearch with no cache led to around 30,000ms, running a cache with 100 led to around 80,000ms and with 500 led to around 300,000ms. Our team had a meeting regarding the decrease in performance and because our BTree doesn’t contain duplicates, nor did we want to hold 100 to 500 BTreeNodes in memory we decided to leave the cache the way it is. I would absolutely appreciate some feedback if there is a better way to implement that cache to achieve better performance. 
 
- GeneBankSearch is slowed significantly by both 100 and 500 sized Caches.
- 
-
- 
-  
