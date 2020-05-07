@@ -1,3 +1,9 @@
+/**
+ * Generic cache 
+ * @author Josh
+ *
+ * @param <T>
+ */
 public class Cache<T> {
 
 	
