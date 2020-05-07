@@ -1,8 +1,6 @@
-
-
 public class Cache<T> {
 
-
+	
 	private IUSingleLinkedList<T> cache;
 	private int cap;
 	public int size;
@@ -82,14 +80,6 @@ public class Cache<T> {
 
 		}
 
-
 	}
-
-
-
-
-
-
-
 
 }
