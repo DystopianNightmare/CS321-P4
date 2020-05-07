@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 /**
  * Main driver file to read file and parse data
- * @author josh
+ * @author Josh, Joe, Kate
  *
  */
 public class GeneBankCreateBTree {
@@ -16,13 +16,14 @@ public class GeneBankCreateBTree {
 	private static boolean useCache = false; //false if arg[0] is 0
 	private static int sequenceLength;		//this is the k value
 	private static  String nameOfTree; // this will be the name of the binary file
-	private BTree tree;
+	private static BTree tree;
 	private static Cache cache;
-	private static long time;
+
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
-	
+
+		long time = System.currentTimeMillis();
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
 			//use caching or not
@@ -43,7 +44,7 @@ public class GeneBankCreateBTree {
 			//parse degree
 			t = Integer.parseInt(args[1]);	
 			if(t == 0 ) {
-				t=31;		//optimal degree
+				t=252;		//optimal degree
 			}
 			//get sequence length
 			sequenceLength = Integer.parseInt(args[3]);
@@ -60,11 +61,9 @@ public class GeneBankCreateBTree {
 		String fileName = args[2];
 
 		//Get name of Binary file and make a new BTree
-
 		nameOfTree = (fileName + ".btree.data." + sequenceLength  );	//This is the name of the binary file
 
-		BTree tree = new BTree(nameOfTree,t,sequenceLength);
-
+		tree = new BTree(nameOfTree,t,sequenceLength);
 		try {
 			Scanner scan = new Scanner(new FileReader(fileName));
 			String line;
@@ -78,12 +77,16 @@ public class GeneBankCreateBTree {
 
 					while(!line.startsWith("//")) {
 						for(int i = 0; i < line.length(); i++) {
-							if(line.charAt(i) == 'a' || line.charAt(i) == 'c' || line.charAt(i) == 'g' || line.charAt(i) == 't' || line.charAt(i) == 'n'|| line.charAt(i) == 'A'|| line.charAt(i) == 'C'|| line.charAt(i) == 'G'|| line.charAt(i) == 'T') {
+							if(line.charAt(i) == 'a' || line.charAt(i) == 'c' || line.charAt(i) == 'g' || 
+									line.charAt(i) == 't' || line.charAt(i) == 'n'|| line.charAt(i) == 'A'|| 
+									line.charAt(i) == 'C'|| line.charAt(i) == 'G'|| line.charAt(i) == 'T') {
 								character += line.charAt(i);
 							}
 						}
 						line = scan.nextLine();
 					}
+
+				
 					//make string of values
 					for(int i = 0; i < character.length()-sequenceLength+1;i++) {
 						String s = "";
@@ -94,14 +97,12 @@ public class GeneBankCreateBTree {
 
 						if(!s.contains("n")) {
 							Long tmp;
-							long key1 = convert(s);
 							if(useCache) {
-								if((tmp=((Long)(cache.search(s)))) !=null && tmp == key1 ) {
+								
+								if((tmp=((Long)(cache.search(s)))) != null ) {
 									tree.BTreeInsert(tmp);
-
 								}else {
 									long key = convert(s);
-									String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
 									cache.addToCache(s,key);
 									tree.BTreeInsert(key);
 
@@ -116,30 +117,35 @@ public class GeneBankCreateBTree {
 				}
 			}
 			scan.close();
-			
-			
-
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
-
 		if(debugLevel == 0) {
 			System.err.println("No Status Messages. Please follow this usage example: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
+			long timenow = System.currentTimeMillis();
+			System.out.println("Time to run: " + (timenow-time));
 		}
 		if(debugLevel == 1) {
 			tree.dumpTree(sequenceLength*2);
 		}
-
-
 	}
+	
+	/**
+	 * prints usage
+	 */
 	public static void printUsage() {
 		System.out.println("java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]");
 	}
+	
+	/**
+	 * converts a string of genes to a binary long
+	 * @param character
+	 * @return
+	 */
 	public static long convert(String character) {
 
 		String s = "";
 		for(int j = 0; j < character.length(); j++) {
-
 
 			if(character.charAt(j) == 'a' || character.charAt(j) == 'A') {
 				s += "00";
@@ -155,13 +161,11 @@ public class GeneBankCreateBTree {
 			}
 			if(character.charAt(j) == 'n' || character.charAt(j) == 'N') {
 				s += "n";
-
-
 			}
 		}
 
 		Long key = Long.parseLong(s);
 		return key;	
-
 	}
+	
 }
