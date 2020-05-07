@@ -64,6 +64,6 @@ public class SLLNode<T>
 	public void setValue(T value) {
 		this.value = value;
 	}
-	
-	
+
+
 }

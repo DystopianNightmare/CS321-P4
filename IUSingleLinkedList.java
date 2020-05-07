@@ -26,7 +26,7 @@ public class IUSingleLinkedList<T>  {
 		tail = head;
 
 	}
-//	@Override
+	//	@Override
 	public void addToFront(T key, T value) {
 		if(count == 0 ) {
 			SLLNode<T> newNode = new SLLNode<T>(key, value);
@@ -36,7 +36,7 @@ public class IUSingleLinkedList<T>  {
 			head.setNext(null);
 			modCount++;
 			count++;
-			
+
 		}else {
 			SLLNode<T> newNode = new SLLNode<T>(key, value);
 			tmp = head;
@@ -44,116 +44,116 @@ public class IUSingleLinkedList<T>  {
 			head = newNode;
 			modCount++;
 			count++;
-			
+
 		}
 	}
 
-//	@Override
-//	public void addToRear(T element) {
-//		if(count == 0) {
-//			SLLNode<T> newNode = new SLLNode<T>(element);
-//			head = newNode;
-//			tail = newNode;
-//			count++;
-//			modCount++;
-//		}else {
-//			SLLNode<T> newNode = new SLLNode<T>(element);
-//			tmp = tail;
-//			tail = newNode;
-//			tmp.setNext(tail);
-//			count++;
-//			modCount++;
-//		}
-//	}
-//	@Override
-//	public void add(T element) {
-//		SLLNode<T> newNode = new SLLNode<T>(element);
-//		if(count == 0) {
-//			head = newNode;
-//		}else {
-//			tail.setNext(newNode);
-//		}
-//		tail = newNode;
-//		count++;
-//		modCount++;
-//
-//	}
-//
-//	@Override
-//	public void addAfter(T element, T target) {
-//		int index = indexOf(target);
-//		if(index == -1) {
-//			throw new NoSuchElementException("no such element");
-//		}
-//		SLLNode<T> newNode = new SLLNode<T>(element);
-//		current = head;
-//		if(index == 0) {
-//			newNode.setNext(current.getNext());
-//			current.setNext(newNode);
-//
-//			if(count == 1) {
-//				tail = newNode;
-//			}
-//			modCount++;
-//			count++;
-//		}else if(index == count-1) {
-//			tmp = tail;
-//			tail.setNext(newNode);
-//			tail = newNode;
-//			modCount++;
-//			count++;
-//		}else{
-//			for(int i = 0; i < index-1; i++) {
-//				current = current.getNext();
-//			}
-//			tmp = current.getNext();
-//			current.setNext(newNode);
-//			newNode.setNext(tmp);
-//			modCount++;
-//			count++;
-//		}
-//
-//	}
-//
-//	@Override
-//	public void add(int index, T element) {
-//		SLLNode<T> newNode = new SLLNode<T>(element);
-//		current = head;
-//		if (index < 0 || index > count) {
-//			throw new IndexOutOfBoundsException(" add(int,T) method index out of range");
-//		}
-//
-//
-//		if(index != count && index != 0){
-//			for(int i = 0; i < index-1; i++) {
-//				current = current.getNext();
-//			}
-//				newNode.setNext(current.getNext());
-//				current.setNext(newNode);
-//		}
-//			
-//		if(index == 0) {
-//
-//			addToFront(element);
-//			count--;
-//			modCount++;
-//			if(index == count){
-//				
-//				tail = newNode;
-//
-//			}}
-//	
-//		if(index == count) {
-//			tail.setNext(newNode);
-//			tail = newNode;
-//		}
-//		
-//		count++;
-//		modCount++;
-//		}
-//	
-//
-//	@Override
+	//	@Override
+	//	public void addToRear(T element) {
+	//		if(count == 0) {
+	//			SLLNode<T> newNode = new SLLNode<T>(element);
+	//			head = newNode;
+	//			tail = newNode;
+	//			count++;
+	//			modCount++;
+	//		}else {
+	//			SLLNode<T> newNode = new SLLNode<T>(element);
+	//			tmp = tail;
+	//			tail = newNode;
+	//			tmp.setNext(tail);
+	//			count++;
+	//			modCount++;
+	//		}
+	//	}
+	//	@Override
+	//	public void add(T element) {
+	//		SLLNode<T> newNode = new SLLNode<T>(element);
+	//		if(count == 0) {
+	//			head = newNode;
+	//		}else {
+	//			tail.setNext(newNode);
+	//		}
+	//		tail = newNode;
+	//		count++;
+	//		modCount++;
+	//
+	//	}
+	//
+	//	@Override
+	//	public void addAfter(T element, T target) {
+	//		int index = indexOf(target);
+	//		if(index == -1) {
+	//			throw new NoSuchElementException("no such element");
+	//		}
+	//		SLLNode<T> newNode = new SLLNode<T>(element);
+	//		current = head;
+	//		if(index == 0) {
+	//			newNode.setNext(current.getNext());
+	//			current.setNext(newNode);
+	//
+	//			if(count == 1) {
+	//				tail = newNode;
+	//			}
+	//			modCount++;
+	//			count++;
+	//		}else if(index == count-1) {
+	//			tmp = tail;
+	//			tail.setNext(newNode);
+	//			tail = newNode;
+	//			modCount++;
+	//			count++;
+	//		}else{
+	//			for(int i = 0; i < index-1; i++) {
+	//				current = current.getNext();
+	//			}
+	//			tmp = current.getNext();
+	//			current.setNext(newNode);
+	//			newNode.setNext(tmp);
+	//			modCount++;
+	//			count++;
+	//		}
+	//
+	//	}
+	//
+	//	@Override
+	//	public void add(int index, T element) {
+	//		SLLNode<T> newNode = new SLLNode<T>(element);
+	//		current = head;
+	//		if (index < 0 || index > count) {
+	//			throw new IndexOutOfBoundsException(" add(int,T) method index out of range");
+	//		}
+	//
+	//
+	//		if(index != count && index != 0){
+	//			for(int i = 0; i < index-1; i++) {
+	//				current = current.getNext();
+	//			}
+	//				newNode.setNext(current.getNext());
+	//				current.setNext(newNode);
+	//		}
+	//			
+	//		if(index == 0) {
+	//
+	//			addToFront(element);
+	//			count--;
+	//			modCount++;
+	//			if(index == count){
+	//				
+	//				tail = newNode;
+	//
+	//			}}
+	//	
+	//		if(index == count) {
+	//			tail.setNext(newNode);
+	//			tail = newNode;
+	//		}
+	//		
+	//		count++;
+	//		modCount++;
+	//		}
+	//	
+	//
+	//	@Override
 	public T removeFirst() {
 		T value = null;
 		if(count == 0 ) {
@@ -172,7 +172,7 @@ public class IUSingleLinkedList<T>  {
 		return value;
 	}
 
-//	@Override
+	//	@Override
 	public T removeLast() {
 		T value = null;
 		if(count == 0 ) {
@@ -207,17 +207,17 @@ public class IUSingleLinkedList<T>  {
 		return value;
 	}
 
-//	@Override
+	//	@Override
 	public T remove(T element) {
 		int i = indexOf(element);
 		if(i == -1) {
 			throw new NoSuchElementException("no such element");
 		}
-		
+
 		return remove(i);
 	}
 
-//	@Override
+	//	@Override
 	public T remove(int index) {
 
 		current = head;
@@ -247,34 +247,34 @@ public class IUSingleLinkedList<T>  {
 		return value;
 	}
 
-//	@Override
-//	public void set(int index, T element) {
-//		if (index < 0 || index >= count) {
-//			throw new IndexOutOfBoundsException(" add(int,T) method index out of range");
-//		}
-//		SLLNode<T> node = head;
-//		for(int i = 0; i < index; i++) {
-//			node = node.getNext();
-//		}
-//		modCount++;
-//		node.setElement(element);
-//
-//	}
-//
-//	@Override
-//	public T get(int index) {
-//		if (index < 0 || index >= count) {
-//			throw new IndexOutOfBoundsException(" add(int,T) method index out of range");
-//		}
-//		current = head;
-//		for(int i = 0; i < index; i++) {
-//			current = current.getNext();
-//		}
-//
-//		return current.getElement();
-//	}
-//
-//	@Override
+	//	@Override
+	//	public void set(int index, T element) {
+	//		if (index < 0 || index >= count) {
+	//			throw new IndexOutOfBoundsException(" add(int,T) method index out of range");
+	//		}
+	//		SLLNode<T> node = head;
+	//		for(int i = 0; i < index; i++) {
+	//			node = node.getNext();
+	//		}
+	//		modCount++;
+	//		node.setElement(element);
+	//
+	//	}
+	//
+	//	@Override
+	//	public T get(int index) {
+	//		if (index < 0 || index >= count) {
+	//			throw new IndexOutOfBoundsException(" add(int,T) method index out of range");
+	//		}
+	//		current = head;
+	//		for(int i = 0; i < index; i++) {
+	//			current = current.getNext();
+	//		}
+	//
+	//		return current.getElement();
+	//	}
+	//
+	//	@Override
 	public int indexOf(T element) {
 		boolean found = false;
 		current = head;
@@ -292,69 +292,69 @@ public class IUSingleLinkedList<T>  {
 		return pos;
 	}
 
-//	@Override
-//	public T first() {
-//		if(count == 0) {
-//			throw new NoSuchElementException("no such element");
-//		}
-//		T element = head.getElement();
-//		return element;
-//	}
-//
-//	@Override
-//	public T last() {
-//		if(count == 0) {
-//			throw new NoSuchElementException("no such element");
-//		}
-//		T element = tail.getElement();
-//		return element;
-//	}
-//
-//	@Override
+	//	@Override
+	//	public T first() {
+	//		if(count == 0) {
+	//			throw new NoSuchElementException("no such element");
+	//		}
+	//		T element = head.getElement();
+	//		return element;
+	//	}
+	//
+	//	@Override
+	//	public T last() {
+	//		if(count == 0) {
+	//			throw new NoSuchElementException("no such element");
+	//		}
+	//		T element = tail.getElement();
+	//		return element;
+	//	}
+	//
+	//	@Override
 	public boolean contains(T target) {
 		boolean found = false;
 		current = head;
 		int index = 0;
-		
+
 		while(!found && index < count) {
-			
+
 			if(current.getKey().equals(target)) {
 				return true;
-				
+
 			}
 			current = current.getNext();
 			index++;
 		}
-		
+
 		return false;
 	}
 
-//	@Override
+	//	@Override
 	public boolean isEmpty() {
 
 		return (count == 0);
 	}
 
-//	@Override
+	//	@Override
 	public int size() {
 
 		return count;
 	}
 
-//	@Override
+	//	@Override
 	public Iterator<T> iterator() {
 
 		return new NodeIterator();
 	}
 
-//	@Override
+	//	@Override
 	public ListIterator<T> listIterator() {
 
 		throw new UnsupportedOperationException("unsupported operation");
 
 	}
 
-//	@Override
+	//	@Override
 	public ListIterator<T> listIterator(int startingIndex) {
 
 		throw new UnsupportedOperationException("unsupported operation");

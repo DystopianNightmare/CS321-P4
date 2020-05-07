@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,15 +11,17 @@ public class GeneBankSearch {
 	private static Integer t; 		//degree to be used -- this is the value for degree
 	//	private static BufferedReader br;
 	private static int cacheSize;		//if cache is used this will be the cache size
-	private static int debugLevel;		//to be used later
+	private static int debugLevel = -1;		//to be used later
 	private static boolean useCache = false; //false if arg[0] is 0
 	private static File BTreeFile;
 	private static File QueryFile;
 	private static RandomAccessFile RAF;
 	private static Cache cache;
+	private static long time;
 
 	public static void main(String[] args) {
-
+		
+		time = System.currentTimeMillis();
 		//use a try-catch to parse all arguments. incorrect param will print usage
 		try {
 			//use caching or not
@@ -63,12 +66,10 @@ public class GeneBankSearch {
 			while(scanQ.hasNext()) {
 				Scanner scanTmp = new Scanner(tmpFile);
 				lineQ=scanQ.nextLine();
-				//				long key = convert(lineQ);
-				//				String string = Long.toString(key);
 
 				if(useCache) {
-
-					while(scanTmp.hasNextLine()) {
+					boolean found = false;
+					while(scanTmp.hasNextLine() && !found) {
 						lineTmp=scanTmp.nextLine();
 						int i = 0;
 						while(lineTmp.charAt(i) != ':') {
@@ -78,23 +79,19 @@ public class GeneBankSearch {
 						String temp = (String) cache.search(lineTmp.substring(0, i));
 
 						if(temp != null ) {
-
 							if(temp.equals(lineQ)) {
-								System.out.println("IN CACHE");
-								System.out.println(lineQ);
-								System.out.println(temp + " <-- this is temp" + end);
-								pw.println(lineQ + lineTmp.substring(i, lineTmp.length()));
+								found = true;
+								pw.println(lineQ.toLowerCase() + lineTmp.substring(i, lineTmp.length()));
+								
 							}
 						}else {
-
 							long key = convert(lineQ);
 							String string = Long.toString(key);
-							
 							if(lineTmp.substring(0, i).contentEquals(string)) {
+								found = true;
 								cache.addToCache(lineTmp.substring(0, i),lineQ);
-								System.out.println("not in cache");
-								System.out.println(string + " " + lineTmp.substring(i, lineTmp.length()));
-								pw.println(lineQ + lineTmp.substring(i, lineTmp.length()));
+								pw.println(lineQ.toLowerCase() + lineTmp.substring(i, lineTmp.length()));
+								
 							}
 						}
 					}
@@ -108,8 +105,7 @@ public class GeneBankSearch {
 							i++;
 						}
 						if(lineTmp.substring(0, i).contentEquals(string)) {
-							System.out.println(lineQ + lineTmp.subSequence(i, lineTmp.length()));
-							pw.println(lineQ + lineTmp.subSequence(i, lineTmp.length()));
+							pw.println(lineQ.toLowerCase() + lineTmp.subSequence(i, lineTmp.length()));
 						}
 					}
 					scanTmp.close();
@@ -130,6 +126,9 @@ public class GeneBankSearch {
 		if(debugLevel == 0) {
 			System.out.println(" print the query output to STDOUT");
 		}
+		long timenow;
+		timenow = System.currentTimeMillis();
+		System.out.println("Time to run: " + (timenow-time));
 	}
 
 	public static void printUsage() {

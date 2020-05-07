@@ -52,7 +52,7 @@ public class GeneBankCreateBTree {
 			}
 			//parse debug level
 		}catch(Exception e) {
-			e.printStackTrace();
+
 			printUsage();
 		}
 
@@ -91,20 +91,20 @@ public class GeneBankCreateBTree {
 							s += character.charAt((i+j));
 
 						}
-					
+
 						if(!s.contains("n")) {
 							Long tmp;
 							if(useCache) {
-								if((tmp=((Long)(cache.search(s)))) != null ) {
-									tree.BTreeInsert(tmp);
-									
-								}else {
+//								if((tmp=((Long)(cache.search(s)))) != null ) {
+//									tree.BTreeInsert(tmp);
+//
+//								}else {
 									long key = convert(s);
 									String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
 									cache.addToCache(s,key);
 									tree.BTreeInsert(key);
-									
-								}
+
+//								}
 							}else {
 								long key = convert(s);
 								String temp = tree.keyToGene((tree.padZero(key, sequenceLength*2)));
@@ -115,8 +115,8 @@ public class GeneBankCreateBTree {
 				}
 			}
 			scan.close();
-			tree.dumpTree(sequenceLength*2);
 			
+
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
@@ -127,7 +127,7 @@ public class GeneBankCreateBTree {
 		if(debugLevel == 1) {
 			tree.dumpTree(sequenceLength*2);
 		}
-		
+
 
 	}
 	public static void printUsage() {

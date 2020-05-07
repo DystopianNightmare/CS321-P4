@@ -1,4 +1,4 @@
-import java.util.LinkedList;
+
 
 public class Cache<T> {
 
@@ -16,16 +16,16 @@ public class Cache<T> {
 		cap = capacity;
 		size = 0;
 	}
-	
+
 	/**
 	 * adds the object to the cache
 	 * @param element - object to be added
 	 */
 	public void addObject(T key, T value) {
 		cache.addToFront(key,value);
-		
+
 		size++;
-		
+
 	}
 	/*
 	 * removes the object from the cache
@@ -61,22 +61,11 @@ public class Cache<T> {
 		if(cache.contains(element)) {
 			T key = removeObject(element);
 			addObject(element,key);
-			
+
 			return key;
 		}
 		return null;
 	}
-//		else {
-//			if(!atCap()) {
-//				addObject(element,key);
-//			}else {
-//				cache.removeLast();
-//				size--;
-//				addObject(element,key);
-//			}
-//			return false;
-//		}
-//	}
 	/**
 	 * adds element to cache
 	 * @param element - represents element to be added
@@ -84,13 +73,13 @@ public class Cache<T> {
 	public void addToCache(T element, T key) {
 		if(!atCap()) {
 			addObject(element,key);
-			
-			
+
+
 		}else {
 			cache.removeLast();
 			size--;
 			addObject(element,key);
-			
+
 		}
 
 
